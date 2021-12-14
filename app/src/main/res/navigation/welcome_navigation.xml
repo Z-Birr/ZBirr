@@ -7,24 +7,43 @@
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.matewos.z_birr.WelcomeFragment"
+        android:name="com.matewos.z_birr.signin.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" >
         <action
             android:id="@+id/action_welcomeFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
-        <action
-            android:id="@+id/action_welcomeFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
         android:name="com.matewos.z_birr.SignupFragment"
         android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup" />
+        tools:layout="@layout/fragment_signup" >
+        <action
+            android:id="@+id/action_signupFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.matewos.z_birr.SignInFragment"
+        android:name="com.matewos.z_birr.signin.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
+    <fragment
+        android:id="@+id/editName2"
+        android:name="com.matewos.z_birr.EditName"
+        android:label="fragment_edit_name"
+        tools:layout="@layout/fragment_edit_name" >
+        <action
+            android:id="@+id/action_editName2_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="com.matewos.z_birr.VerificationFragment"
+        android:label="fragment_verification"
+        tools:layout="@layout/fragment_verification" >
+        <action
+            android:id="@+id/action_verificationFragment_to_editName2"
+            app:destination="@id/editName2" />
+    </fragment>
 </navigation>

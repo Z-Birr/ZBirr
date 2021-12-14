@@ -5,7 +5,7 @@
     android:id="@+id/welcomeFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WelcomeFragment" >
+    tools:context=".signin.WelcomeFragment" >
 
     <Button
         android:id="@+id/signUp"

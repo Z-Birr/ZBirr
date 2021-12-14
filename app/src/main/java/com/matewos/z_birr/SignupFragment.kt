@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -47,13 +48,13 @@ class SignupFragment : Fragment() {
 
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
 
-        binding.editTextTextFirstName.setText(savedInstanceState?.getString("firstName"))
-        binding.editTextTextLastName.setText(savedInstanceState?.getString("lastName"))
-        binding.editTextTextEmailAddress.setText(savedInstanceState?.getString("email"))
+//        binding.editTextTextFirstName.setText(savedInstanceState?.getString("firstName"))
+//        binding.editTextTextLastName.setText(savedInstanceState?.getString("lastName"))
+//        binding.editTextTextEmailAddress.setText(savedInstanceState?.getString("email"))
         binding.editTextPhone.setText(savedInstanceState?.getString("phoneNumber"))
-        binding.editTextTextConfirmPassword.setText(savedInstanceState?.getString("confirmPassword"))
-        binding.editTextTextPassword.setText(savedInstanceState?.getString("password"))
-        binding.editTextNumberVerificationCode.setText(savedInstanceState?.getString("verificationCode"))
+//        binding.editTextTextConfirmPassword.setText(savedInstanceState?.getString("confirmPassword"))
+//        binding.editTextTextPassword.setText(savedInstanceState?.getString("password"))
+//        binding.editTextNumberVerificationCode.setText(savedInstanceState?.getString("verificationCode"))
 
         return binding.root
     }
@@ -63,6 +64,7 @@ class SignupFragment : Fragment() {
 
         binding.buttonSignUp.setOnClickListener {
             //VIA PHONE NUMBER
+            binding.buttonSignUp.isEnabled = false
 
             callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -100,26 +102,23 @@ class SignupFragment : Fragment() {
                     // by combining the code with a verification ID.
                     Log.wtf(TAG, "onCodeSent:$verificationId")
 
-                    if (verificationId != ""){
-                        storedVerificationId = verificationId
-                    }
-                    else{
-                        storedVerificationId = savedInstanceState?.getString("verificationId").toString()
+                    savedInstanceState?.putString(VERIFICATION_ID, storedVerificationId)
+
+
+
+
+                    storedVerificationId = if (verificationId != ""){
+                        verificationId
+                    } else{
+                        savedInstanceState?.getString(VERIFICATION_ID).toString()
                     }
 
-                    storedVerificationId = verificationId
-                    savedInstanceState?.putString("verificationId", storedVerificationId)
+                    val bundle = Bundle()
+                    bundle.putString(VERIFICATION_ID, storedVerificationId)
+                    findNavController().navigate(R.id.action_signupFragment_to_verificationFragment, bundle)
+
                     // Save verification ID and resending token so we can use them later
 
-                    binding.verify.setOnClickListener {
-                        if (storedVerificationId == ""){
-                            storedVerificationId = savedInstanceState?.getString("verificationId").toString()
-                        }
-                        Log.wtf(TAG, "onCodeSent in verify:$storedVerificationId")
-                        val code = binding.editTextNumberVerificationCode.text.toString()
-                        val credential = PhoneAuthProvider.getCredential(storedVerificationId, code)
-                        signInWithPhoneAuthCredential(credential)
-                    }
                     var storedVerificationId = verificationId
                     var resendToken = token
 
@@ -170,13 +169,13 @@ class SignupFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("firstName", binding.editTextTextFirstName.toString())
-        outState.putString("lastName", binding.editTextTextLastName.toString())
-        outState.putString("email", binding.editTextTextEmailAddress.toString())
+//        outState.putString("firstName", binding.editTextTextFirstName.toString())
+//        outState.putString("lastName", binding.editTextTextLastName.toString())
+//        outState.putString("email", binding.editTextTextEmailAddress.toString())
         outState.putString("phoneNumber", binding.editTextPhone.toString())
-        outState.putString("password", binding.editTextTextPassword.toString())
-        outState.putString("confirmPassword", binding.editTextTextConfirmPassword.toString())
-        outState.putString("verificationCode", binding.editTextNumberVerificationCode.text.toString())
+//        outState.putString("password", binding.editTextTextPassword.toString())
+//        outState.putString("confirmPassword", binding.editTextTextConfirmPassword.toString())
+//        outState.putString("verificationCode", binding.editTextNumberVerificationCode.text.toString())
     }
 
     override fun onStart() {
@@ -213,20 +212,5 @@ class SignupFragment : Fragment() {
     }
 
 
-    fun sha256(input: String) = hashString("SHA-256", input)
 
-    private fun hashString(type: String, input: String): String {
-        val HEX_CHARS = "0123456789ABCDEF"
-        val bytes = MessageDigest
-            .getInstance(type)
-            .digest(input.toByteArray())
-        val result = StringBuilder(bytes.size * 2)
-
-        bytes.forEach {
-            val i = it.toInt()
-            result.append(HEX_CHARS[i shr 4 and 0x0f])
-            result.append(HEX_CHARS[i and 0x0f])
-        }
-        return result.toString()
-    }
 }

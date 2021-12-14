@@ -28,7 +28,6 @@ class WelcomeActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        supportActionBar?.hide()
 
     }
 }

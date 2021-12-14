@@ -1,4 +1,4 @@
-package com.matewos.z_birr
+package com.matewos.z_birr.signin
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.matewos.z_birr.MainActivity
+import com.matewos.z_birr.R
 import com.matewos.z_birr.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {
