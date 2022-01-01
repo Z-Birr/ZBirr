@@ -40,10 +40,10 @@
         android:text="Do not share this password with anyone keep it with you and and only you"
         android:textColor="#FF9800"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/editTextTextConfirmPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editTextTextPassword"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextConfirmPassword"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextConfirmPassword"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextPassword"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword"
         app:layout_constraintVertical_bias="0.251" />
 
     <Button

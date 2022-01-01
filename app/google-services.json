@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "353060920018-h2e2d0rq21ffda8sd636ai9kpm070mb2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.matewos.z_birr",
+            "certificate_hash": "3804a1d06ba2fdbe7a185b93522bb886efbc2ef8"
+          }
+        },
+        {
           "client_id": "353060920018-sr2u4c6ipulvu70v5muvljkrm23o3skt.apps.googleusercontent.com",
           "client_type": 3
         }
