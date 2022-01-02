@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
@@ -26,7 +28,9 @@ class EditName : Fragment() {
     lateinit var binding : FragmentEditNameBinding
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
-
+    val viewModel: FormValidationViewModel by lazy {
+        ViewModelProvider(this).get(FormValidationViewModel::class.java)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,6 +67,9 @@ class EditName : Fragment() {
                 .addOnFailureListener {  }
         }
 
+        binding.viewModel = viewModel
+        // 4. Set the binding's lifecycle (otherwise Live Data won't work properly)
+        binding.lifecycleOwner = this
 
         // Inflate the layout for this fragment
         return binding.root

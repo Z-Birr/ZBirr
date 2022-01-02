@@ -1,6 +1,7 @@
 package com.matewos.z_birr.signin
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,8 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.matewos.z_birr.MainActivity
 import com.matewos.z_birr.R
+import com.matewos.z_birr.STATE
+import com.matewos.z_birr.SplashScreen
 import com.matewos.z_birr.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {
@@ -26,11 +29,18 @@ class WelcomeFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     lateinit var resultLauncher : ActivityResultLauncher<Intent>
+    val sharedPrefState = SplashScreen.instance.applicationContext.getSharedPreferences(
+        STATE, Context.MODE_PRIVATE)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        if (sharedPrefState?.getString("state", "") == "verified"){
+            findNavController().navigate(R.id.action_welcomeFragment_to_signInFragment)
+        }
+        else if (sharedPrefState.getString("state", "") == "newUserPasswordSetup") {
+            findNavController().navigate(R.id.action_welcomeFragment_to_editName2)
+        }
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
 
         // Inflate the layout for this fragment

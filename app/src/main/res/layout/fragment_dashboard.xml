@@ -56,4 +56,17 @@
         app:layout_constraintStart_toStartOf="@+id/buttonQrScan"
         app:layout_constraintTop_toBottomOf="@+id/buttonQrScan"
         app:layout_constraintVertical_bias="0.418" />
+
+    <ProgressBar
+        android:id="@+id/progressBar3"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonPay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.156"
+        app:layout_constraintStart_toEndOf="@+id/buttonPay"
+        app:layout_constraintTop_toTopOf="@+id/buttonPay"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

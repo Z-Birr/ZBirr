@@ -1,5 +1,6 @@
 package com.matewos.z_birr
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -64,8 +65,13 @@ class VerificationFragment : Fragment() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     if (auth.currentUser != null) {
-
                         findNavController().navigate(R.id.action_verificationFragment_to_signInFragment)
+                        val sharedPref = SplashScreen.instance.applicationContext.getSharedPreferences(
+                            STATE, Context.MODE_PRIVATE)
+                        with(sharedPref?.edit()) {
+                            this?.putString("state", "verified")
+                            this?.apply()
+                        }
                     } else {
                         // Sign in failed, display a message and update the UI
                         Log.w(TAG, "signInWithCredential:failure", task.exception)

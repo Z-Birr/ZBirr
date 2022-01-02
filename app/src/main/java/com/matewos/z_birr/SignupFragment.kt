@@ -1,5 +1,6 @@
 package com.matewos.z_birr
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.FirebaseException
@@ -23,7 +26,6 @@ import java.util.concurrent.TimeUnit
 class SignupFragment : Fragment() {
 
     private val TAG: String? = SignupFragment::class.qualifiedName
-    private lateinit var signupViewModel: SignupViewModel
     private var _binding: FragmentSignupBinding? = null
     private lateinit var auth: FirebaseAuth
     lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
@@ -31,6 +33,10 @@ class SignupFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+//    private lateinit var binding: FragmentSignupBinding
+    val viewModel: FormValidationViewModel by lazy {
+        ViewModelProvider(this).get(FormValidationViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +50,12 @@ class SignupFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        signupViewModel = ViewModelProvider(this).get(SignupViewModel::class.java)
-
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
+
+        // 3. Set the viewModel instance
+        binding.viewModel = viewModel
+        // 4. Set the binding's lifecycle (otherwise Live Data won't work properly)
+        binding.lifecycleOwner = this
 
 //        binding.editTextTextFirstName.setText(savedInstanceState?.getString("firstName"))
 //        binding.editTextTextLastName.setText(savedInstanceState?.getString("lastName"))
@@ -56,6 +65,8 @@ class SignupFragment : Fragment() {
 //        binding.editTextTextPassword.setText(savedInstanceState?.getString("password"))
 //        binding.editTextNumberVerificationCode.setText(savedInstanceState?.getString("verificationCode"))
 
+
+
         return binding.root
     }
 
@@ -64,6 +75,8 @@ class SignupFragment : Fragment() {
 
         binding.buttonSignUp.setOnClickListener {
             //VIA PHONE NUMBER
+            binding.progressBar.visibility = View.VISIBLE
+            binding.textCheckRobot.visibility = View.VISIBLE
             binding.buttonSignUp.isEnabled = false
 
             callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
