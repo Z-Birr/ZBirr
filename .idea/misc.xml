@@ -4,18 +4,20 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/bg_gradient.xml" value="0.10520833333333333" />
+        <entry key="app/src/main/res/drawable/ic_baseline_refresh_24.xml" value="0.13177083333333334" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_welcome.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_edit_name.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.18925831202046037" />
         <entry key="app/src/main/res/layout/fragment_sign_in.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_signup.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_verification.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.1" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.1109375" />
+        <entry key="app/src/main/res/menu/transactions_menu.xml" value="0.25" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1" />
         <entry key="app/src/main/res/xml/viewmodel.xml" value="0.1" />
       </map>

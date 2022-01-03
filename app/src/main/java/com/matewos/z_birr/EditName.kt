@@ -63,6 +63,11 @@ class EditName : Fragment() {
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
+                    val sharedPref = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
+                    with(sharedPref?.edit()) {
+                        this?.putString("state", "alreadySignedupUser")
+                        this?.apply()
+                    }
                 }
                 .addOnFailureListener {  }
         }

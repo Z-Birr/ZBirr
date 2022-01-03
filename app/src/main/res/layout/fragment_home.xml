@@ -21,23 +21,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current balance is "
+        app:layout_constraintStart_toStartOf="@+id/hello"
+        app:layout_constraintTop_toBottomOf="@+id/hello" />
+
+    <TextView
         android:id="@+id/balance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="@+id/hello"
-        app:layout_constraintStart_toStartOf="@+id/hello"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/hello" />
 
     <ImageView
         android:id="@+id/imageUserIdQr"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="108dp"
         android:src="@drawable/ic_dashboard_black_24dp"
         app:layout_constraintEnd_toEndOf="@+id/balance"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="@+id/balance"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="@+id/hello"
         app:layout_constraintTop_toBottomOf="@+id/balance" />
 
     <EditText
@@ -61,5 +69,28 @@
         app:layout_constraintEnd_toEndOf="@+id/editTextAmountRequest"
         app:layout_constraintStart_toStartOf="@+id/editTextAmountRequest"
         app:layout_constraintTop_toBottomOf="@+id/editTextAmountRequest" />
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:progressTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_refresh_24"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

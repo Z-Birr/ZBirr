@@ -106,10 +106,10 @@ class SignInFragment : Fragment() {
             if (newUser) {
                 jsonObject.put("password1", binding.editTextTextPassword.text.toString())
                 jsonObject.put("password2", binding.editTextTextConfirmPassword.text.toString())
-                url = "$baseUrl/rest-auth/registration/"
+                url = "$BASEURL/rest-auth/registration/"
             } else {
                 jsonObject.put("password", binding.editTextTextPassword.text.toString())
-                url = "$baseUrl/rest-auth/login/"
+                url = "$BASEURL/rest-auth/login/"
             }
             Log.i("Backend     ", jsonObject.toString())
             val jsonObjectRequest = JsonObjectRequest(
@@ -130,7 +130,7 @@ class SignInFragment : Fragment() {
                         val token = response.getString("key")
 
                         if (newUser) {
-                            url = "$baseUrl/initialize/"
+                            url = "$BASEURL/initialize/"
                             val response2 = SendRequest.authorized(
                                 token, Request.Method.POST, url, null
                             )

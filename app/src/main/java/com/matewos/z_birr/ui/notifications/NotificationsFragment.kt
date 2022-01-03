@@ -3,11 +3,10 @@ package com.matewos.z_birr.ui.notifications
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +29,62 @@ class NotificationsFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.transactions_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.refresh -> {
+                item.isEnabled=false
+                val jsonObjectRequest = object : JsonObjectRequest(
+                    Request.Method.GET, "$BASEURL/transactiontable/", null,
+                    Response.Listener { response ->
+                        val jsonArray = response.getJSONArray("transactions")
+                        val transactions = arrayOfNulls<String>(jsonArray.length())
+                        var temp  = ""
+                        for (i in 0 until jsonArray.length()) {
+                            temp = jsonArray[i].toString()
+                            Log.i("Backend", temp)
+                            transactions[i] = temp
+                        }
+                        val adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_list_item_1,
+                            transactions
+                        )
+                        binding.transactionsList.adapter = adapter
+                        item.isEnabled = true
+                        Log.i("Backend", "Response: %s".format(response.toString()))
+                    },
+                    Response.ErrorListener { error ->
+                        item.isEnabled = true
+                        Log.i("Backend", "Response: %s".format(error.toString()))
+                        Toast.makeText(requireContext(), "Make sure you are connected to a stable connection and try again", Toast.LENGTH_SHORT).show()
+
+                    }
+                ) {
+                    @Throws(AuthFailureError::class)
+                    override fun getHeaders(): Map<String, String> {
+                        val params: MutableMap<String, String> = HashMap()
+                        params["Authorization"] = "Token $token"
+                        //..add other headers
+                        return params
+                    }
+                }
+                MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                    .addToRequestQueue((jsonObjectRequest))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,32 +97,6 @@ class NotificationsFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val jsonObjectRequest = object : JsonObjectRequest(
-            Request.Method.GET, "$BASEURL/transactiontable/", null,
-            Response.Listener { response ->
-                val jsonArray = response.getJSONArray("transactions")
-                val transactions = arrayOfNulls<String>(jsonArray.length())
-                for (i in 0 until jsonArray.length()){
-                    transactions[i] = jsonArray[i].toString()
-                }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, transactions)
-                binding.transactionsList.adapter = adapter
-                Log.i("Backend", "Response: %s".format(response.toString()))
-            },
-            Response.ErrorListener { error ->
-                Log.i("Backend", "Response: %s".format(error.toString()))
-
-            }
-        ) {
-            @Throws(AuthFailureError::class)
-            override fun getHeaders(): Map<String, String> {
-                val params: MutableMap<String, String> = HashMap()
-                params["Authorization"] = "Token $token"
-                //..add other headers
-                return params
-            }
-        }
-        MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
 
 
 

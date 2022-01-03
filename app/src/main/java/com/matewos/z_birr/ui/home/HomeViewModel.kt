@@ -29,17 +29,7 @@ class HomeViewModel() : ViewModel() {
 
 
     val text: LiveData<String> = _text
-    private val _balance: MutableLiveData<Double> = MutableLiveData<Double>().apply {
-        SendRequest.authorized(SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE).getString("Token", "")
-            , Request.Method.GET
-            ,"$BASEURL/currentbalance/"
-            ,null)
-        try {
-            value = SendRequest.respons.getString("currentBalance").toDouble()
-        }catch (e: JSONException){
-            e.printStackTrace()
-        }
-    }
+
     private val _firstName : MutableLiveData<String> = MutableLiveData<String>().apply {
         database.child("users").child(auth.currentUser!!.uid).child("first_name").get()
             .addOnSuccessListener {
@@ -64,7 +54,6 @@ class HomeViewModel() : ViewModel() {
 
     val firstName: LiveData<String> = _firstName
     val lastName: LiveData<String> = _lastName
-    val balance: LiveData<Double> = _balance
 
 //    init {
 //        Firebase.database.setPersistenceEnabled(true)
