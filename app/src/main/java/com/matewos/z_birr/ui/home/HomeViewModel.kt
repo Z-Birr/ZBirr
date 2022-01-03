@@ -1,15 +1,22 @@
 package com.matewos.z_birr.ui.home
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.android.volley.Request
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.matewos.z_birr.BASEURL
+import com.matewos.z_birr.SendRequest
+import com.matewos.z_birr.SplashScreen
+import com.matewos.z_birr.TOKEN
+import org.json.JSONException
 
 class HomeViewModel() : ViewModel() {
 
@@ -22,15 +29,16 @@ class HomeViewModel() : ViewModel() {
 
 
     val text: LiveData<String> = _text
-    private val _balance: MutableLiveData<Long> = MutableLiveData<Long>().apply {
-        database.child("users").child(auth.currentUser!!.uid).child("balance").get()
-            .addOnSuccessListener {
-                //value = it.value as Long
-                Log.i( "ViewModel", "get data successful: ${value}")
-            }
-            .addOnFailureListener {
-                Log.e("ViewModel", it.message.toString())
-            }
+    private val _balance: MutableLiveData<Double> = MutableLiveData<Double>().apply {
+        SendRequest.authorized(SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE).getString("Token", "")
+            , Request.Method.GET
+            ,"$BASEURL/currentbalance/"
+            ,null)
+        try {
+            value = SendRequest.respons.getString("currentBalance").toDouble()
+        }catch (e: JSONException){
+            e.printStackTrace()
+        }
     }
     private val _firstName : MutableLiveData<String> = MutableLiveData<String>().apply {
         database.child("users").child(auth.currentUser!!.uid).child("first_name").get()
@@ -52,22 +60,11 @@ class HomeViewModel() : ViewModel() {
                 Log.e("ViewModel", it.message.toString())
             }
     }
-    private val _password : MutableLiveData<String> = MutableLiveData<String>().apply {
-//        database.child("users").child(auth.currentUser!!.uid).child(arg).get()
-//            .addOnSuccessListener {
-//                value = it.value as String
-//                Log.i( "ViewModel", "get data successful: ${value}")
-//            }
-//            .addOnFailureListener {
-//                Log.e("ViewModel", it.message.toString())
-//            }
-        value = "1234"
-    }
+
 
     val firstName: LiveData<String> = _firstName
     val lastName: LiveData<String> = _lastName
-    val balance: LiveData<Long> = _balance
-    val password: LiveData<String> = _password
+    val balance: LiveData<Double> = _balance
 
 //    init {
 //        Firebase.database.setPersistenceEnabled(true)

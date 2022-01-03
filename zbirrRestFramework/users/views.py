@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from users.models import Balance, Transactions
-from users.serializers import TransactionsSerializer, UsersSerializer
+from users.serializers import BalanceSerializer, TransactionsSerializer, UsersSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from decimal import Decimal
@@ -176,4 +176,12 @@ def transactionTable(request):
     list.extend(transactions)
     serializer = TransactionsSerializer(list, many=True)
 
+    return Response({"transactions":serializer.data})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def currentBalance(request):
+    user = User.objects.get(username=request.user)
+    balance = Balance.objects.get(user=user)
+    serializer = BalanceSerializer(balance)
     return Response(serializer.data)

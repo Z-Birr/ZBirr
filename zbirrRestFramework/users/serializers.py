@@ -19,4 +19,4 @@ class TransactionsSerializer(serializers.ModelSerializer):
 class BalanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Balance
-        fields = ['user', 'currentBalance']
+        fields = ['currentBalance']

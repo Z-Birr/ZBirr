@@ -50,6 +50,7 @@ class HomeFragment : Fragment() {
         val hello : TextView = binding.hello
         val balance: TextView = binding.balance
 
+        balance.setText("Current Balance: ETB ")
         homeViewModel.firstName.observe(viewLifecycleOwner, {
             hello.text = "Hello, $it "
         })
@@ -57,7 +58,7 @@ class HomeFragment : Fragment() {
             hello.text = "${hello.text} $it"
         })
         homeViewModel.balance.observe(viewLifecycleOwner, {
-            balance.text = "Current Balance: ETB $it"
+            balance.text = "${balance.text} $it"
         })
         auth = Firebase.auth
 
