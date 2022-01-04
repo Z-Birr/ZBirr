@@ -1,9 +1,9 @@
 # ZBirr
 centralized money transferring and payment app using android
 
-Project done using Google's Firebase for authentication
-                   Django for backend and database
-                   Android kotlin frontend
+Project done using Google's Firebase for authentication,
+                   Django for backend and database,
+                   Android kotlin frontend,
 The backend is hosted on heroku.
 
 if you want to run the django server change the BASEURL constant in constants.kt to http://127.0.0.1:8000. Use the chrome's portforwarding forward port 5000 or any other port to http://127.0.0.1:8000
