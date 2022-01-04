@@ -53,21 +53,39 @@ class EditName : Fragment() {
             val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
             val token = sharedPref?.getString("Token", "")
             Log.i("Backend", token.toString())
-            SendRequest.authorized(token, Request.Method.PUT, url, jsonObject)
-
-
 
             database.child("users").child(auth.currentUser!!.uid).child("first_name").setValue(binding.editTextTextFirstName.text.toString())
             database.child("users").child(auth.currentUser!!.uid).child("last_name").setValue(binding.editTextTextLastName.text.toString())
                 .addOnSuccessListener {
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    val sharedPref = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
-                    with(sharedPref?.edit()) {
-                        this?.putString("state", "alreadySignedupUser")
-                        this?.apply()
+                    val jsonObjectRequest = object : JsonObjectRequest(
+                        Request.Method.PUT, url, jsonObject,
+                        Response.Listener { response ->
+                            val intent = Intent(activity, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            with(sharedPref?.edit()) {
+                                this?.putString("state", "alreadySignedinUser")
+                                this?.apply()
+                            }
+                            Log.i("Backend", "Response: %s".format(response.toString()))
+                        },
+                        Response.ErrorListener { error ->
+                            Log.i("Backend", "Response: %s".format(error.toString()))
+                            SendRequest.respons = JSONObject()
+                            SendRequest.respons.put("error", error.toString())
+                        }
+                    ) {
+                        @Throws(AuthFailureError::class)
+                        override fun getHeaders(): Map<String, String> {
+                            val params: MutableMap<String, String> = HashMap()
+                            params["Authorization"] = "Token $token"
+                            //..add other headers
+                            return params
+                        }
                     }
+                    MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+
+
                 }
                 .addOnFailureListener {  }
         }

@@ -37,37 +37,26 @@
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/hello" />
 
-    <ImageView
-        android:id="@+id/imageUserIdQr"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="108dp"
-        android:src="@drawable/ic_dashboard_black_24dp"
-        app:layout_constraintEnd_toEndOf="@+id/balance"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="@+id/hello"
-        app:layout_constraintTop_toBottomOf="@+id/balance" />
-
     <EditText
         android:id="@+id/editTextAmountRequest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Request Amount"
+        android:hint="Amount"
         android:inputType="number"
         android:text="10.00"
-        app:layout_constraintEnd_toEndOf="@+id/imageUserIdQr"
-        app:layout_constraintStart_toStartOf="@+id/imageUserIdQr"
-        app:layout_constraintTop_toBottomOf="@+id/imageUserIdQr" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textViewRequestPayment"
+        app:layout_constraintStart_toStartOf="@+id/textViewRequestPayment"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRequestPayment" />
 
     <Button
         android:id="@+id/buttonGenerateQrCode"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
-        android:text="Generate"
-        app:layout_constraintEnd_toEndOf="@+id/editTextAmountRequest"
-        app:layout_constraintStart_toStartOf="@+id/editTextAmountRequest"
+        android:text="Generate QR code"
+        app:layout_constraintEnd_toEndOf="@+id/textViewRequestPayment"
+        app:layout_constraintStart_toStartOf="@+id/textViewRequestPayment"
         app:layout_constraintTop_toBottomOf="@+id/editTextAmountRequest" />
 
     <ProgressBar
@@ -92,5 +81,17 @@
         app:backgroundTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewRequestPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="124dp"
+        android:text="Payment request\n using QR code"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

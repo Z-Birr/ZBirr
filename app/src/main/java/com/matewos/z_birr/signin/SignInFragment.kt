@@ -65,7 +65,6 @@ class SignInFragment : Fragment() {
 
         auth = Firebase.auth
         database = Firebase.database.reference
-        val baseUrl = "http://127.0.0.1:5000"
         var url=""
         val jsonObject = JSONObject()
         jsonObject.put("username", auth.currentUser!!.uid.toString())
@@ -173,7 +172,7 @@ class SignInFragment : Fragment() {
                 { error ->
                     binding.finish.isEnabled = true
                     binding.progressBar2.visibility = View.GONE
-                    Toast.makeText(context, "Password incorrect", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Make sure you are connected to stable internet connection", Toast.LENGTH_SHORT).show()
                     Log.i("Backend", "Response: %s".format(error.toString()))
 
                 }

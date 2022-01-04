@@ -8,8 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +29,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import com.matewos.z_birr.*
+import com.matewos.z_birr.databinding.AlertdialogPasswordBinding
 import com.matewos.z_birr.databinding.FragmentHomeBinding
 import org.json.JSONException
 import org.json.JSONObject
@@ -112,6 +115,16 @@ class HomeFragment : Fragment() {
         }
 
         binding.buttonGenerateQrCode.setOnClickListener {
+
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Scan QR code to get payment")
+            val qrView = layoutInflater.inflate(R.layout.alertdialog_qr_generator, null)
+
+            builder.setView(qrView)
+            builder.show()
+
+
+
             val amount = binding.editTextAmountRequest.text.toString()
             val data = auth.currentUser!!.uid.toString() + " " + amount
 
@@ -129,7 +142,7 @@ class HomeFragment : Fragment() {
                             bmp.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
                         }
                     }
-                    binding.imageUserIdQr.setImageBitmap(bmp)
+                    qrView.findViewById<ImageView>(R.id.imageUserIdQr2).setImageBitmap(bmp)
                 } catch (e: WriterException) {
                     e.printStackTrace()
                 }

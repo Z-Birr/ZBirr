@@ -43,7 +43,7 @@ class NotificationsFragment : Fragment() {
             R.id.refresh -> {
                 item.isEnabled=false
                 val jsonObjectRequest = object : JsonObjectRequest(
-                    Request.Method.GET, "$BASEURL/transactiontable/", null,
+                    Request.Method.GET, "$BASEURL/transactiontable/0/", null,
                     Response.Listener { response ->
                         val jsonArray = response.getJSONArray("transactions")
                         val transactions = arrayOfNulls<String>(jsonArray.length())
