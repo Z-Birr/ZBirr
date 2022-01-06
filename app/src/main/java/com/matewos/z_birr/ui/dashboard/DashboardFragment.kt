@@ -83,6 +83,8 @@ class DashboardFragment : Fragment() {
         val root: View = binding.root
         layout = root
 
+        binding.editTextAmount.setText(savedInstanceState?.getString("amount"))
+        binding.editTextUserId.setText(savedInstanceState?.getString("userId"))
 
         auth = Firebase.auth
         mQrResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -323,7 +325,11 @@ class DashboardFragment : Fragment() {
         ).show()
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("userId", binding.editTextUserId.toString())
+        outState.putString("amount", binding.editTextAmount.toString())
+    }
 
 }
 

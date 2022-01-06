@@ -10,14 +10,27 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.matewos.z_birr.*
+import com.matewos.z_birr.database.AppDatabase
+import com.matewos.z_birr.database.Transaction
+import com.matewos.z_birr.database.TransactionDao
 import com.matewos.z_birr.databinding.FragmentNotificationsBinding
 import org.json.JSONArray
 import org.json.JSONObject
+import java.sql.Date
+import java.sql.Time
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.HashMap
 
 class NotificationsFragment : Fragment() {
 
@@ -25,6 +38,10 @@ class NotificationsFragment : Fragment() {
     private var _binding: FragmentNotificationsBinding? = null
     val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
     val token = sharedPref.getString("Token", "")
+    lateinit var db: AppDatabase
+    lateinit var transactionDao: TransactionDao
+    lateinit var recyclerView: RecyclerView
+    lateinit var transactionAdapter : TransactionAdapter
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -43,24 +60,38 @@ class NotificationsFragment : Fragment() {
             R.id.refresh -> {
                 item.isEnabled=false
                 val jsonObjectRequest = object : JsonObjectRequest(
-                    Request.Method.GET, "$BASEURL/transactiontable/0/", null,
+                    Request.Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
                     Response.Listener { response ->
-                        val jsonArray = response.getJSONArray("transactions")
-                        val transactions = arrayOfNulls<String>(jsonArray.length())
-                        var temp  = ""
-                        for (i in 0 until jsonArray.length()) {
-                            temp = jsonArray[i].toString()
-                            Log.i("Backend", temp)
-                            transactions[i] = temp
+                        if (response.getString("transactions") == "up to date"){
+                            Toast.makeText(requireContext(), "Up to date", Toast.LENGTH_SHORT).show()
+                        }else {
+                            val jsonArray = response.getJSONArray("transactions")
+                            var calendar = Calendar.getInstance()
+
+                            var temp = JSONObject()
+                            var value = ""
+                            for (i in 0 until jsonArray.length()) {
+                                temp = jsonArray[i] as JSONObject
+                                value = temp.getString("date")
+                                calendar.set(
+                                    value.substring(0, 4).toInt(),
+                                    value.substring(5, 7).toInt(),
+                                    value.substring(8, 10).toInt(),
+                                    value.substring(11, 13).toInt(),
+                                    value.substring(14, 16).toInt(),
+                                    value.substring(17, 19).toInt()
+                                )
+                                Log.i("Backend", calendar.toString())
+                                transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
+                                calendar = Calendar.getInstance()
+                            }
+
                         }
-                        val adapter = ArrayAdapter(
-                            requireContext(),
-                            android.R.layout.simple_list_item_1,
-                            transactions
-                        )
-                        binding.transactionsList.adapter = adapter
+                        //binding.transactionsList.adapter = adapter
                         item.isEnabled = true
                         Log.i("Backend", "Response: %s".format(response.toString()))
+                        Log.i("Backend", transactionDao.getAll().toString())
+
                     },
                     Response.ErrorListener { error ->
                         item.isEnabled = true
@@ -93,13 +124,11 @@ class NotificationsFragment : Fragment() {
         notificationsViewModel =
             ViewModelProvider(this).get(NotificationsViewModel::class.java)
 
-
+        db = Room.databaseBuilder(requireContext(), AppDatabase::class.java, "AppDatabase").allowMainThreadQueries().fallbackToDestructiveMigration().build()
+        transactionDao = db.transactionDao()
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-
-
-
+        initView(root)
 
         return root
     }
@@ -107,5 +136,15 @@ class NotificationsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initView(view: View) {
+        recyclerView = view.findViewById(R.id.transactionsRecyclerView)
+        Log.i("Backend", transactionDao.getAll().toString())
+
+        transactionAdapter = TransactionAdapter(transactionDao.getAll())
+        recyclerView.adapter = transactionAdapter
+        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recyclerView.layoutManager = LinearLayoutManager(context)
     }
 }

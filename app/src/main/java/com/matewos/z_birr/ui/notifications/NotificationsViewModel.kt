@@ -3,6 +3,7 @@ package com.matewos.z_birr.ui.notifications
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.matewos.z_birr.database.Transaction
 
 class NotificationsViewModel : ViewModel() {
 
@@ -10,4 +11,8 @@ class NotificationsViewModel : ViewModel() {
         value = "This is notifications Fragment"
     }
     val text: LiveData<String> = _text
+
+    private val _adapter = MutableLiveData<ArrayList<Transaction>>().apply{
+
+    }
 }

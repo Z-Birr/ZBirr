@@ -70,8 +70,11 @@ class SignInFragment : Fragment() {
         jsonObject.put("username", auth.currentUser!!.uid.toString())
         val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
 
-
-
+        val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
+        with(sharedPrefState?.edit()) {
+            this?.putString("uid", auth.currentUser!!.uid.toString())
+            this?.apply()
+        }
 
         val user = User("n", null, null)
         database.child("users").child(auth.currentUser!!.uid).child("last_name").get()

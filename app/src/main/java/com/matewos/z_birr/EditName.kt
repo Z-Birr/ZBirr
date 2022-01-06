@@ -98,4 +98,11 @@ class EditName : Fragment() {
         return binding.root
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("firstName", binding.editTextTextFirstName.toString())
+        outState.putString("lastName", binding.editTextTextLastName.toString())
+
+    }
+
 }

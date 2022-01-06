@@ -62,6 +62,8 @@ class HomeFragment : Fragment() {
         val balance: TextView = binding.balance
         val sharedPref = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
 
+        binding.editTextAmountRequest.setText(savedInstanceState?.getString("amountRequest"))
+
         balance.setText("Current Balance: ETB ")
         homeViewModel.firstName.observe(viewLifecycleOwner, {
             hello.text = "Hello, $it "
@@ -152,8 +154,12 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("amountRequest", _binding?.editTextAmountRequest.toString())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }
