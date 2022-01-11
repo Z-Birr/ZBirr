@@ -62,12 +62,13 @@ class NotificationsFragment : Fragment() {
                 val jsonObjectRequest = object : JsonObjectRequest(
                     Request.Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
                     Response.Listener { response ->
+                        var length = 0
                         if (response.getString("transactions") == "up to date"){
                             Toast.makeText(requireContext(), "Up to date", Toast.LENGTH_SHORT).show()
                         }else {
                             val jsonArray = response.getJSONArray("transactions")
                             var calendar = Calendar.getInstance()
-
+                            length = jsonArray.length()
                             var temp = JSONObject()
                             var value = ""
                             for (i in 0 until jsonArray.length()) {
@@ -82,15 +83,17 @@ class NotificationsFragment : Fragment() {
                                     value.substring(17, 19).toInt()
                                 )
                                 Log.i("Backend", calendar.toString())
-                                transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
+                                transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("balance"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
                                 calendar = Calendar.getInstance()
                             }
-
                         }
+                        transactionAdapter = TransactionAdapter(transactionDao.getAll())
+
+                        transactionAdapter.notifyItemInserted(0)
+                        recyclerView.smoothScrollToPosition(0)
+
                         //binding.transactionsList.adapter = adapter
                         item.isEnabled = true
-                        Log.i("Backend", "Response: %s".format(response.toString()))
-                        Log.i("Backend", transactionDao.getAll().toString())
 
                     },
                     Response.ErrorListener { error ->
@@ -140,11 +143,11 @@ class NotificationsFragment : Fragment() {
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.transactionsRecyclerView)
-        Log.i("Backend", transactionDao.getAll().toString())
-
+        recyclerView.setHasFixedSize(false)
         transactionAdapter = TransactionAdapter(transactionDao.getAll())
         recyclerView.adapter = transactionAdapter
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         recyclerView.layoutManager = LinearLayoutManager(context)
     }
+
 }

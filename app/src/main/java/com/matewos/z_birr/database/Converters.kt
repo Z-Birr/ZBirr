@@ -8,16 +8,19 @@ import java.util.*
 class Converters {
     @TypeConverter
     fun fromString(value: String): Calendar {
-        val calendar = Calendar.getInstance()
-        calendar.set(
-            value.substring(0, 4).toInt(),
-            value.substring(5, 7).toInt(),
-            value.substring(8, 10).toInt(),
-            value.substring(11, 13).toInt(),
-            value.substring(14, 16).toInt(),
-            value.substring(17, 19).toInt()
-        )
-        return calendar
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        val date = sdf.parse(value)// all done
+        val cal = sdf.getCalendar()
+//        val calendar = Calendar.getInstance()
+//        calendar.set(
+//            value.substring(0, 4).toInt(),
+//            value.substring(5, 7).toInt(),
+//            value.substring(8, 10).toInt(),
+//            value.substring(11, 13).toInt(),
+//            value.substring(14, 16).toInt(),
+//            value.substring(17, 19).toInt()
+//        )
+        return cal
     }
 
     @TypeConverter

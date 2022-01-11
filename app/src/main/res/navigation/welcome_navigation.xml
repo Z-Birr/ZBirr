@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.matewos.z_birr.signin.WelcomeFragment"
-        android:label="fragment_welcome"
-        tools:layout="@layout/fragment_welcome" >
+        android:label="Welcome"
+        tools:layout="@layout/fragment_welcome">
         <action
             android:id="@+id/action_welcomeFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
@@ -23,8 +23,8 @@
     <fragment
         android:id="@+id/signupFragment"
         android:name="com.matewos.z_birr.SignupFragment"
-        android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup" >
+        android:label="Phone number setup"
+        tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signupFragment_to_verificationFragment"
             app:destination="@id/verificationFragment" />
@@ -32,8 +32,8 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.matewos.z_birr.signin.SignInFragment"
-        android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
+        android:label="Sign in"
+        tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_editName2"
             app:destination="@id/editName2" />
@@ -41,13 +41,13 @@
     <fragment
         android:id="@+id/editName2"
         android:name="com.matewos.z_birr.EditName"
-        android:label="fragment_edit_name"
+        android:label="Edit Name"
         tools:layout="@layout/fragment_edit_name" />
     <fragment
         android:id="@+id/verificationFragment"
         android:name="com.matewos.z_birr.VerificationFragment"
-        android:label="fragment_verification"
-        tools:layout="@layout/fragment_verification" >
+        android:label="Verify Phone"
+        tools:layout="@layout/fragment_verification">
         <action
             android:id="@+id/action_verificationFragment_to_signInFragment"
             app:destination="@id/signInFragment" />

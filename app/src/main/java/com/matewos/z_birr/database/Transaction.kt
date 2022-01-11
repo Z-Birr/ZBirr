@@ -15,7 +15,8 @@ data class Transaction (
     @ColumnInfo(name= "userId") val userId: String?,
     @ColumnInfo(name = "fullName") val fullName: String?,
     @ColumnInfo(name = "date") val date: Calendar?,
-    @ColumnInfo(name = "amount") val amount: Double
+    @ColumnInfo(name = "amount") val amount: Double,
+    @ColumnInfo(name = "balance") val balance: Double,
 ){
     companion object{
         const val FULL_NAME = "fullName"
@@ -27,7 +28,7 @@ data class Transaction (
 
 @Dao
 interface TransactionDao{
-    @Query("SELECT * FROM 'transaction'")
+    @Query("SELECT * FROM 'transaction' ORDER BY date DESC")
     fun getAll(): List<Transaction>
 
     @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR sender LIKE :search")
@@ -36,8 +37,8 @@ interface TransactionDao{
     @Query("SELECT COUNT(transactionId) FROM `transaction`")
     fun count():Int
 
-    @Query("INSERT INTO `transaction` (fullName, userId, sender, date, amount) VALUES (:fullName, :userId, :sender, :date, :amount)")
-    fun insert(fullName: String, userId: String, amount: Double, sender: Boolean, date: Calendar)
+    @Query("INSERT INTO `transaction` (fullName, userId, sender, balance, date, amount) VALUES (:fullName, :userId, :sender, :balance, :date, :amount)")
+    fun insert(fullName: String, userId: String, balance: Double ,amount: Double, sender: Boolean, date: Calendar)
 
     @Query("DELETE FROM `transaction`")
     fun deleteAll()

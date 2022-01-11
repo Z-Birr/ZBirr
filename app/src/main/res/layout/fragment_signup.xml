@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:enabled="@{viewModel.validPhone}"
-            android:text="Sign Up"
+            android:text="Next"
             app:layout_constraintEnd_toEndOf="@+id/editTextPhone"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/editTextPhone"

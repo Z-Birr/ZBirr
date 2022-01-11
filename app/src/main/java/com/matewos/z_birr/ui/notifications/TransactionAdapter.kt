@@ -1,5 +1,6 @@
 package com.matewos.z_birr.ui.notifications
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,14 @@ import com.matewos.z_birr.R
 import com.matewos.z_birr.database.Transaction
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.recyclerview.widget.LinearLayoutManager
+
+
+
 
 class TransactionAdapter(private val dataSet: List<Transaction>) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
-
+    lateinit var recyclerView: RecyclerView
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -51,7 +56,8 @@ class TransactionAdapter(private val dataSet: List<Transaction>) :
         viewHolder.userId.text = dataSet[position].userId
         viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
         viewHolder.fullName.text = dataSet[position].fullName
-        val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
+        val calendar: Calendar = dataSet[position].date!!
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
         val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm")
         viewHolder.date.text = simpleDateFormat.format(calendar.time)
         if (dataSet[position].sender!!){
@@ -64,5 +70,6 @@ class TransactionAdapter(private val dataSet: List<Transaction>) :
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
+
 
 }
