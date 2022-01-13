@@ -1,20 +1,16 @@
 package com.matewos.z_birr.ui.notifications
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.matewos.z_birr.R
 import com.matewos.z_birr.database.Transaction
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.transaction_row_item.view.*
-import java.text.FieldPosition
+import com.matewos.z_birr.databinding.TransactionRowItemBinding
 
 
 class TransactionAdapter(private val dataSet: MutableList<Transaction>, private val onSelect: (Transaction?) -> Unit) :
@@ -41,7 +37,8 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
             image = view.findViewById(R.id.transactionImage)
         }
         fun bind(transaction: Transaction, onSelect: (Transaction?) -> Unit){
-            itemView.cardView.setOnClickListener {
+            val item = TransactionRowItemBinding.bind(itemView)
+            item.cardView.setOnClickListener {
                 onSelect(transaction)
             }
         }
@@ -65,7 +62,7 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
         viewHolder.fullName.text = dataSet[position].fullName
         val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
-        val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm")
+        val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm", Locale.US)
         viewHolder.date.text = simpleDateFormat.format(calendar.time)
         if (dataSet[position].sender!!){
             viewHolder.image.setImageResource(R.drawable.ic_baseline_send_24)

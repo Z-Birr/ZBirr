@@ -1,6 +1,5 @@
 package com.matewos.z_birr
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.FirebaseException
@@ -19,7 +15,6 @@ import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.matewos.z_birr.databinding.FragmentSignupBinding
-import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
 
 
@@ -47,7 +42,7 @@ class SignupFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
 
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
@@ -57,16 +52,7 @@ class SignupFragment : Fragment() {
         // 4. Set the binding's lifecycle (otherwise Live Data won't work properly)
         binding.lifecycleOwner = this
 
-//        binding.editTextTextFirstName.setText(savedInstanceState?.getString("firstName"))
-//        binding.editTextTextLastName.setText(savedInstanceState?.getString("lastName"))
-//        binding.editTextTextEmailAddress.setText(savedInstanceState?.getString("email"))
         binding.editTextPhone.setText(savedInstanceState?.getString("phoneNumber"))
-//        binding.editTextTextConfirmPassword.setText(savedInstanceState?.getString("confirmPassword"))
-//        binding.editTextTextPassword.setText(savedInstanceState?.getString("password"))
-//        binding.editTextNumberVerificationCode.setText(savedInstanceState?.getString("verificationCode"))
-
-
-
         return binding.root
     }
 
@@ -132,8 +118,8 @@ class SignupFragment : Fragment() {
 
                     // Save verification ID and resending token so we can use them later
 
-                    var storedVerificationId = verificationId
-                    var resendToken = token
+//                    var storedVerificationId = verificationId
+//                    var resendToken = token
 
 
                 }
@@ -208,7 +194,6 @@ class SignupFragment : Fragment() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
 
-                    val user = task.result?.user
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)

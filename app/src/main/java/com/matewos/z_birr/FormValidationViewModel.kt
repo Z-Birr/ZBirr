@@ -1,7 +1,6 @@
 package com.matewos.z_birr
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,7 +40,6 @@ class FormValidationViewModel: ViewModel() {
     }
 
     fun isPasswordValid(pass: String): Boolean {
-        Log.i("Backend", "password checked")
         return Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{6,}$", pass)
     }
 
@@ -51,11 +49,8 @@ class FormValidationViewModel: ViewModel() {
         }
     }
 
-
-
     fun isPhoneNumberValid(phone: String): Boolean{
         //validPhone.value = Pattern.matches("^\\+\\d{12,}$", phone)
-        Log.i("Backend", "phone checked")
         return Pattern.matches("^\\+\\d{12,}$", phone)
     }
     fun isNameValid(name: String): Boolean{

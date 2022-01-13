@@ -3,7 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp' version "1.5.31-1.0.0"
-    id 'kotlin-android-extensions'
 }
 
 
@@ -117,8 +116,5 @@ dependencies {
 
     implementation("androidx.fragment:fragment:1.4.0")
     implementation("androidx.core:core:1.7.0")
-    def lifecycle_version = "2.2.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    
 }

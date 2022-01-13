@@ -3,7 +3,6 @@ package com.matewos.z_birr
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +33,7 @@ class EditName : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
 
         binding = FragmentEditNameBinding.inflate(inflater, container, false)
         database = Firebase.database.reference
@@ -48,18 +47,16 @@ class EditName : Fragment() {
             jsonObject.put("first_name", binding.editTextTextFirstName.text.toString())
             jsonObject.put("last_name", binding.editTextTextLastName.text.toString())
             jsonObject.put("username", auth.currentUser?.uid)
-            Log.i("Backend request", jsonObject.toString())
 
             val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
             val token = sharedPref?.getString("Token", "")
-            Log.i("Backend", token.toString())
 
             database.child("users").child(auth.currentUser!!.uid).child("first_name").setValue(binding.editTextTextFirstName.text.toString())
             database.child("users").child(auth.currentUser!!.uid).child("last_name").setValue(binding.editTextTextLastName.text.toString())
                 .addOnSuccessListener {
                     val jsonObjectRequest = object : JsonObjectRequest(
-                        Request.Method.PUT, url, jsonObject,
-                        Response.Listener { response ->
+                        Method.PUT, url, jsonObject,
+                        Response.Listener { _ ->
                             val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
                             with(sharedPrefState?.edit()) {
                                 this?.putString("state", "oldUserPasswordSetup")
@@ -69,10 +66,8 @@ class EditName : Fragment() {
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
 
-                            Log.i("Backend", "Response: %s".format(response.toString()))
                         },
                         Response.ErrorListener { error ->
-                            Log.i("Backend", "Response: %s".format(error.toString()))
                             SendRequest.respons = JSONObject()
                             SendRequest.respons.put("error", error.toString())
                         }

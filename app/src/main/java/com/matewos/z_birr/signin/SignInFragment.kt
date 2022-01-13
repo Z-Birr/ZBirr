@@ -3,24 +3,16 @@ package com.matewos.z_birr.signin
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.android.volley.AuthFailureError
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -55,7 +47,7 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
 
 // 3. Set the viewModel instance
@@ -65,14 +57,14 @@ class SignInFragment : Fragment() {
 
         auth = Firebase.auth
         database = Firebase.database.reference
-        var url=""
+        var url: String
         val jsonObject = JSONObject()
-        jsonObject.put("username", auth.currentUser!!.uid.toString())
+        jsonObject.put("username", auth.currentUser!!.uid)
         val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
 
         val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
         with(sharedPrefState?.edit()) {
-            this?.putString("uid", auth.currentUser!!.uid.toString())
+            this?.putString("uid", auth.currentUser!!.uid)
             this?.apply()
         }
 
@@ -92,16 +84,6 @@ class SignInFragment : Fragment() {
             }
             .addOnFailureListener{  }
 
-
-
-
-
-
-
-
-
-
-
         binding.finish.setOnClickListener {
             binding.finish.isEnabled = false
             binding.progressBar2.visibility = View.VISIBLE
@@ -113,7 +95,6 @@ class SignInFragment : Fragment() {
                 jsonObject.put("password", binding.editTextTextPassword.text.toString())
                 url = "$BASEURL/rest-auth/login/"
             }
-            Log.i("Backend     ", jsonObject.toString())
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, url, jsonObject,
                 { response ->
@@ -133,15 +114,8 @@ class SignInFragment : Fragment() {
 
                         if (newUser) {
                             url = "$BASEURL/initialize/"
-                            val response2 = SendRequest.authorized(
+                            SendRequest.authorized(
                                 token, Request.Method.POST, url, null
-                            )
-                            Log.i(
-                                "Backend response  ",
-                                response2.toString() + "Second" + SplashScreen.instance.getSharedPreferences(
-                                    TOKEN,
-                                    Context.MODE_PRIVATE
-                                ).getString("Token", "")
                             )
 
                             with(sharedPrefState?.edit()) {
@@ -170,14 +144,11 @@ class SignInFragment : Fragment() {
                         binding.progressBar2.visibility = View.GONE
                         Toast.makeText(context, "Password incorrect", Toast.LENGTH_SHORT).show()
                     }
-                    Log.i("Backend", "Response: %s".format(response.toString()))
                 },
                 { error ->
                     binding.finish.isEnabled = true
                     binding.progressBar2.visibility = View.GONE
                     Toast.makeText(context, "Make sure you are connected to stable internet connection", Toast.LENGTH_SHORT).show()
-                    Log.i("Backend", "Response: %s".format(error.toString()))
-
                 }
             )
             MySingleton.getInstance(SplashScreen.instance.applicationContext)
@@ -190,21 +161,5 @@ class SignInFragment : Fragment() {
         return binding.root
     }
 
-    fun sha256(input: String) = hashString("SHA-256", input)
-
-    private fun hashString(type: String, input: String): String {
-        val HEX_CHARS = "0123456789ABCDEF"
-        val bytes = MessageDigest
-            .getInstance(type)
-            .digest(input.toByteArray())
-        val result = StringBuilder(bytes.size * 2)
-
-        bytes.forEach {
-            val i = it.toInt()
-            result.append(HEX_CHARS[i shr 4 and 0x0f])
-            result.append(HEX_CHARS[i and 0x0f])
-        }
-        return result.toString()
-    }
 
 }

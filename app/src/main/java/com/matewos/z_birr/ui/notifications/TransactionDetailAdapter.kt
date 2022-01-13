@@ -1,6 +1,5 @@
 package com.matewos.z_birr.ui.notifications
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.matewos.z_birr.R
 import com.matewos.z_birr.database.Transaction
-import kotlinx.android.synthetic.main.transaction_row_item.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,7 +50,7 @@ RecyclerView.Adapter<TransactionDetailAdapter.ViewHolder>() {
             viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
             val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
-            val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm")
+            val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm", Locale.US)
             viewHolder.date.text = simpleDateFormat.format(calendar.time)
             if (dataSet[position].sender!!){
                 viewHolder.image.setImageResource(R.drawable.ic_baseline_send_24)
