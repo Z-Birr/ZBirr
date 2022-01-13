@@ -32,6 +32,9 @@ interface TransactionDao{
     @Query("SELECT * FROM 'transaction' ORDER BY date DESC")
     fun getAll() : List<Transaction>
 
+    @Query("SELECT * FROM 'transaction' WHERE transactionId IN ( SELECT MAX(transactionId) FROM `transaction` GROUP BY fullName) ORDER BY date DESC")
+    fun getAllByName() : List<Transaction>
+
     @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR fullName LIKE :search ORDER BY date DESC")
     fun search(search: String): List<Transaction> // Don't forget to put %uid%
 

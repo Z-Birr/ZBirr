@@ -1,13 +1,16 @@
 package com.matewos.z_birr.ui.notifications
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
@@ -46,6 +49,7 @@ class NotificationsFragment : Fragment(){
     lateinit var recyclerView: RecyclerView
     lateinit var transactionAdapter : TransactionAdapter
     lateinit var transactions : MutableList<Transaction>
+    lateinit var tempTransactions : MutableList<Transaction>
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -63,20 +67,22 @@ class NotificationsFragment : Fragment(){
         val searchView = menu.findItem(R.id.app_bar_search).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(p0: String?): Boolean {
+                val inputMethodManager = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
                 return true
             }
 
             override fun onQueryTextChange(p0: String?): Boolean {
                 val searchText = p0!!.lowercase()
+
                 if (searchText.isNotEmpty()) {
-                    Log.i("Search",searchText)
                     transactions.clear()
-                    transactions.addAll(transactionDao.search("%" + searchText + "%"))
+                    transactions.addAll(tempTransactions.filter{ it.fullName!!.contains(searchText, ignoreCase = true) || it.userId!!.contains(searchText, ignoreCase = true) })
                     transactionAdapter.notifyDataSetChanged()
                 }
                 else{
                     transactions.clear()
-                    transactions.addAll(transactionDao.getAll().toMutableList())
+                    transactions.addAll(tempTransactions)
                     transactionAdapter.notifyDataSetChanged()
                 }
                 return true
@@ -118,8 +124,11 @@ class NotificationsFragment : Fragment(){
 
                                 calendar = Calendar.getInstance()
                             }
-                            transactions.addAll(0, transactionDao.getUpdates(length))
-                            transactionAdapter.notifyItemInserted(0)
+                            transactions.clear()
+                            transactions.addAll(transactionDao.getAllByName())
+                            tempTransactions.clear()
+                            tempTransactions.addAll(transactions)
+                            transactionAdapter.notifyDataSetChanged()
                             recyclerView.smoothScrollToPosition(0)
                             Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
                         }
@@ -179,7 +188,9 @@ class NotificationsFragment : Fragment(){
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.transactionsRecyclerView)
-        transactions = transactionDao.getAll().toMutableList()
+        transactions = transactionDao.getAllByName().toMutableList()
+        tempTransactions = mutableListOf()
+        tempTransactions.addAll(transactions)
         transactionAdapter = TransactionAdapter(transactions){
             if (it != null) {
                 val bundle = Bundle()
