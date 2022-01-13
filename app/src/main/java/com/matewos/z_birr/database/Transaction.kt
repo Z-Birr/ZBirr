@@ -32,7 +32,7 @@ interface TransactionDao{
     @Query("SELECT * FROM 'transaction' ORDER BY date DESC")
     fun getAll() : List<Transaction>
 
-    @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR fullName LIKE :search")
+    @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR fullName LIKE :search ORDER BY date DESC")
     fun search(search: String): List<Transaction> // Don't forget to put %uid%
 
     @Query("SELECT COUNT(transactionId) FROM `transaction`")
