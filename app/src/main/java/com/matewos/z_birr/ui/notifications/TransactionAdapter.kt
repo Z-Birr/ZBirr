@@ -63,7 +63,7 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
         // contents of the view with that element
         viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
         viewHolder.fullName.text = dataSet[position].fullName
-        val calendar: Calendar = dataSet[position].date!!
+        val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
         val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm")
         viewHolder.date.text = simpleDateFormat.format(calendar.time)
