@@ -1,5 +1,6 @@
 package com.matewos.z_birr.ui.home
 
+import android.content.ClipData
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -57,13 +58,19 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        auth = Firebase.auth
 
         val hello : TextView = binding.hello
         val balance: TextView = binding.balance
         val sharedPref = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
-
+        binding.textViewUidActual.setText(auth.currentUser!!.uid)
         binding.editTextAmountRequest.setText(savedInstanceState?.getString("amountRequest"))
-
+        binding.textViewUidActual.setOnClickListener {
+            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip : ClipData = ClipData.newPlainText("userId", binding.textViewUidActual.text.toString())
+            clipboardManager.setPrimaryClip(clip)
+            Toast.makeText(requireContext(), "user id copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
         balance.setText("Current Balance: ETB ")
         homeViewModel.firstName.observe(viewLifecycleOwner, {
             hello.text = "Hello, $it "
@@ -72,7 +79,6 @@ class HomeFragment : Fragment() {
             hello.text = "${hello.text} $it"
         })
 
-        auth = Firebase.auth
 
         binding.balance.setText(sharedPref.getString("currentBalance", ""))
         binding.floatingActionButtonRefresh.setOnClickListener{
@@ -128,7 +134,7 @@ class HomeFragment : Fragment() {
 
 
             val amount = binding.editTextAmountRequest.text.toString()
-            val data = auth.currentUser!!.uid.toString() + " " + amount
+            val data = auth.currentUser!!.uid + " " + amount
 
             if (data.isEmpty()) {
                 Toast.makeText(activity, "Error: Please restart the app", Toast.LENGTH_SHORT).show()

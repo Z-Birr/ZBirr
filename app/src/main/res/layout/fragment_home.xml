@@ -29,6 +29,14 @@
         app:layout_constraintTop_toBottomOf="@+id/hello" />
 
     <TextView
+        android:id="@+id/textViewUidActual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/textViewUid"
+        app:layout_constraintTop_toBottomOf="@+id/balance" />
+
+    <TextView
         android:id="@+id/balance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,6 +44,14 @@
         app:layout_constraintEnd_toEndOf="@+id/hello"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/hello" />
+
+    <TextView
+        android:id="@+id/textViewUid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User ID: "
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/balance" />
 
     <EditText
         android:id="@+id/editTextAmountRequest"

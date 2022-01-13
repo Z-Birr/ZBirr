@@ -10,3 +10,5 @@ if you want to run the django server change the BASEURL constant in constants.kt
 Make sure to have both the computer and the android phone on the same network. Usb cable can also be used.
 
 pip install -r requirements.txt -----> to run the django first install the requirements
+
+Appetize link: https://appetize.io/embed/ghxqa52qfbjcn0v6fnkef8vv8c

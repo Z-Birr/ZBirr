@@ -1,12 +1,16 @@
 package com.matewos.z_birr.ui.notifications
 
+import android.content.ClipData
+import android.content.Context
 import android.os.Bundle
+import android.content.ClipboardManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.matewos.z_birr.R
@@ -34,6 +38,13 @@ class DetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
+
+        binding.textViewUserId.setOnClickListener {
+            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip : ClipData = ClipData.newPlainText("userId", binding.textViewUserId.text.toString())
+            clipboardManager.setPrimaryClip(clip)
+            Toast.makeText(requireContext(), "user id copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
 
         db = AppDatabase.getDatabase(requireContext())
         transactionDao = db.transactionDao()

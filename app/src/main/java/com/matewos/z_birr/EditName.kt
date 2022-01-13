@@ -42,8 +42,8 @@ class EditName : Fragment() {
 
 
         binding.next.setOnClickListener {
-
-            val url = "http://127.0.0.1:5000/rest-auth/user/"
+            binding.next.isEnabled = false
+            val url = "$BASEURL/rest-auth/user/"
             val jsonObject = JSONObject()
             jsonObject.put("first_name", binding.editTextTextFirstName.text.toString())
             jsonObject.put("last_name", binding.editTextTextLastName.text.toString())
@@ -60,13 +60,15 @@ class EditName : Fragment() {
                     val jsonObjectRequest = object : JsonObjectRequest(
                         Request.Method.PUT, url, jsonObject,
                         Response.Listener { response ->
+                            val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
+                            with(sharedPrefState?.edit()) {
+                                this?.putString("state", "oldUserPasswordSetup")
+                                this?.apply()
+                            }
                             val intent = Intent(activity, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
-                            with(sharedPref?.edit()) {
-                                this?.putString("state", "alreadySignedinUser")
-                                this?.apply()
-                            }
+
                             Log.i("Backend", "Response: %s".format(response.toString()))
                         },
                         Response.ErrorListener { error ->
@@ -87,7 +89,7 @@ class EditName : Fragment() {
 
 
                 }
-                .addOnFailureListener {  }
+                .addOnFailureListener { binding.next.isEnabled = true }
         }
 
         binding.viewModel = viewModel
