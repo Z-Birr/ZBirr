@@ -6,36 +6,44 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.matewos.z_birr.R
 import com.matewos.z_birr.database.Transaction
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.transaction_row_item.view.*
+import java.text.FieldPosition
 
 
-
-
-class TransactionAdapter(private val dataSet: List<Transaction>) :
+class TransactionAdapter(private val dataSet: MutableList<Transaction>, private val onSelect: (Transaction?) -> Unit) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
     lateinit var recyclerView: RecyclerView
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val vieww = view
         val fullName: TextView
-        val userId: TextView
         val amount: TextView
         val date: TextView
         val image: ImageView
+        var transactionPosition = 0
         init {
             // Define click listener for the ViewHolder's View.
             fullName = view.findViewById(R.id.transactionFullName)
-            userId = view.findViewById(R.id.transactionUserId)
             amount = view.findViewById(R.id.textViewAmountTransfered)
             date = view.findViewById(R.id.textViewDate)
             image = view.findViewById(R.id.transactionImage)
+        }
+        fun bind(transaction: Transaction, onSelect: (Transaction?) -> Unit){
+            itemView.cardView.setOnClickListener {
+                onSelect(transaction)
+            }
         }
     }
 
@@ -53,7 +61,6 @@ class TransactionAdapter(private val dataSet: List<Transaction>) :
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.userId.text = dataSet[position].userId
         viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
         viewHolder.fullName.text = dataSet[position].fullName
         val calendar: Calendar = dataSet[position].date!!
@@ -66,6 +73,8 @@ class TransactionAdapter(private val dataSet: List<Transaction>) :
         else {
             viewHolder.image.setImageResource(R.drawable.ic_baseline_receive_24)
         }
+        viewHolder.transactionPosition = position
+        viewHolder.bind(dataSet[position], onSelect)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

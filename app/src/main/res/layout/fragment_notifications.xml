@@ -11,5 +11,6 @@
         android:id="@+id/transactionsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
         tools:listitem="@layout/transaction_row_item" />
 </LinearLayout>

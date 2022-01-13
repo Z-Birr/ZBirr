@@ -1,5 +1,6 @@
 package com.matewos.z_birr.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.reactivex.Flowable
 import java.sql.Date
@@ -29,10 +30,10 @@ data class Transaction (
 @Dao
 interface TransactionDao{
     @Query("SELECT * FROM 'transaction' ORDER BY date DESC")
-    fun getAll(): List<Transaction>
+    fun getAll() : List<Transaction>
 
-    @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR sender LIKE :search")
-    fun search(search: String): Flowable<List<Transaction>> // Don't forget to put %uid%
+    @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR fullName LIKE :search")
+    fun search(search: String): List<Transaction> // Don't forget to put %uid%
 
     @Query("SELECT COUNT(transactionId) FROM `transaction`")
     fun count():Int
@@ -42,4 +43,7 @@ interface TransactionDao{
 
     @Query("DELETE FROM `transaction`")
     fun deleteAll()
+
+    @Query("SELECT * FROM 'transaction' ORDER BY date DESC LIMIT :count")
+    fun getUpdates(count: Int): List<Transaction>
 }

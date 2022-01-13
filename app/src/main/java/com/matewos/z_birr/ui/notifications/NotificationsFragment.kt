@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +35,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
-class NotificationsFragment : Fragment() {
+class NotificationsFragment : Fragment(){
 
     private lateinit var notificationsViewModel: NotificationsViewModel
     private var _binding: FragmentNotificationsBinding? = null
@@ -42,17 +45,44 @@ class NotificationsFragment : Fragment() {
     lateinit var transactionDao: TransactionDao
     lateinit var recyclerView: RecyclerView
     lateinit var transactionAdapter : TransactionAdapter
+    lateinit var transactions : MutableList<Transaction>
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        notificationsViewModel =
+            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+
         setHasOptionsMenu(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.transactions_menu, menu)
+        val searchView = menu.findItem(R.id.app_bar_search).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                val searchText = p0!!.lowercase()
+                if (searchText.isNotEmpty()) {
+                    Log.i("Search",searchText)
+                    transactions.clear()
+                    transactions.addAll(transactionDao.search("%" + searchText + "%"))
+                    transactionAdapter.notifyDataSetChanged()
+                }
+                else{
+                    transactions.clear()
+                    transactions.addAll(transactionDao.getAll().toMutableList())
+                    transactionAdapter.notifyDataSetChanged()
+                }
+                return true
+            }
+
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -83,14 +113,16 @@ class NotificationsFragment : Fragment() {
                                     value.substring(17, 19).toInt()
                                 )
                                 Log.i("Backend", calendar.toString())
+
                                 transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("balance"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
+
                                 calendar = Calendar.getInstance()
                             }
+                            transactions.addAll(0, transactionDao.getUpdates(length))
+                            transactionAdapter.notifyItemInserted(0)
+                            recyclerView.smoothScrollToPosition(0)
+                            Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
                         }
-                        transactionAdapter = TransactionAdapter(transactionDao.getAll())
-
-                        transactionAdapter.notifyItemInserted(0)
-                        recyclerView.smoothScrollToPosition(0)
 
                         //binding.transactionsList.adapter = adapter
                         item.isEnabled = true
@@ -115,6 +147,7 @@ class NotificationsFragment : Fragment() {
                     .addToRequestQueue((jsonObjectRequest))
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -124,14 +157,17 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-
-        db = Room.databaseBuilder(requireContext(), AppDatabase::class.java, "AppDatabase").allowMainThreadQueries().fallbackToDestructiveMigration().build()
-        transactionDao = db.transactionDao()
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+
+
+
+
+        db = AppDatabase.getDatabase(requireContext())
+        transactionDao = db.transactionDao()
         initView(root)
+
 
         return root
     }
@@ -143,10 +179,16 @@ class NotificationsFragment : Fragment() {
 
     private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.transactionsRecyclerView)
-        recyclerView.setHasFixedSize(false)
-        transactionAdapter = TransactionAdapter(transactionDao.getAll())
+        transactions = transactionDao.getAll().toMutableList()
+        transactionAdapter = TransactionAdapter(transactions){
+            if (it != null) {
+                val bundle = Bundle()
+                bundle.putString("uid", it.userId)
+                findNavController().navigate(R.id.action_navigation_notifications_to_detailsFragment, bundle)
+            }
+        }
         recyclerView.adapter = transactionAdapter
-        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        recyclerView.setHasFixedSize(false)
         recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
