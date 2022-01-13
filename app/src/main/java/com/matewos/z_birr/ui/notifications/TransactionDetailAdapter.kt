@@ -1,5 +1,6 @@
 package com.matewos.z_birr.ui.notifications
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +50,7 @@ RecyclerView.Adapter<TransactionDetailAdapter.ViewHolder>() {
             // Get element from your dataset at this position and replace the
             // contents of the view with that element
             viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
-            val calendar: Calendar = dataSet[position].date!!
+            val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
             val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm")
             viewHolder.date.text = simpleDateFormat.format(calendar.time)
