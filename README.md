@@ -12,4 +12,4 @@ Make sure to have both the computer and the android phone on the same network. U
 
 pip install -r requirements.txt -----> to run the django first install the requirements
 
-Appetize link: https://appetize.io/embed/ghxqa52qfbjcn0v6fnkef8vv8c
+Appetize link: https://appetize.io/embed/dffbzt1b2x1j7gf010put16jb0
