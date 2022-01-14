@@ -9,12 +9,13 @@ import androidx.room.TypeConverters
 
 @Database(entities = [Transaction::class], version = 4)
 @TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase(){
+abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
+
     companion object {
-        var db : AppDatabase? = null
+        var db: AppDatabase? = null
         fun getDatabase(context: Context): AppDatabase {
-            if (db==null) {
+            if (db == null) {
                 synchronized(AppDatabase::class.java) {
                     db = Room.databaseBuilder(
                         context.applicationContext,

@@ -6,6 +6,6 @@ class User(
     val balance: Double?
 //            val password: String,
 //            val email: String,
-            ) {
+) {
 
 }

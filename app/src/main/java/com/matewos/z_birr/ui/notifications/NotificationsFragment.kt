@@ -6,26 +6,17 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.SearchView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.CoroutinesRoom
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
+import com.google.android.material.snackbar.Snackbar
 import com.matewos.z_birr.*
 import com.matewos.z_birr.database.AppDatabase
 import com.matewos.z_birr.database.Transaction
@@ -33,16 +24,14 @@ import com.matewos.z_birr.database.TransactionDao
 import com.matewos.z_birr.databinding.FragmentNotificationsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import org.json.JSONObject
-import java.sql.Date
-import java.sql.Time
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-class NotificationsFragment : Fragment(){
+class NotificationsFragment : Fragment() {
 
     private lateinit var notificationsViewModel: NotificationsViewModel
     private var _binding: FragmentNotificationsBinding? = null
@@ -51,13 +40,14 @@ class NotificationsFragment : Fragment(){
     lateinit var db: AppDatabase
     lateinit var transactionDao: TransactionDao
     lateinit var recyclerView: RecyclerView
-    lateinit var transactionAdapter : TransactionAdapter
-    lateinit var transactions : MutableList<Transaction>
-    lateinit var tempTransactions : MutableList<Transaction>
+    lateinit var transactionAdapter: TransactionAdapter
+    lateinit var transactions: MutableList<Transaction>
+    lateinit var tempTransactions: MutableList<Transaction>
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    val scope = CoroutineScope(Dispatchers.Main)
+    lateinit var scope: CoroutineScope
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +60,10 @@ class NotificationsFragment : Fragment(){
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.transactions_menu, menu)
         val searchView = menu.findItem(R.id.app_bar_search).actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
-                val inputMethodManager = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
                 return true
             }
@@ -82,62 +73,72 @@ class NotificationsFragment : Fragment(){
 
                 if (searchText.isNotEmpty()) {
                     transactions.clear()
-                    transactions.addAll(tempTransactions.filter{ it.fullName!!.contains(searchText, ignoreCase = true) || it.userId!!.contains(searchText, ignoreCase = true) })
+                    transactions.addAll(tempTransactions.filter {
+                        it.fullName!!.contains(
+                            searchText,
+                            ignoreCase = true
+                        ) || it.userId!!.contains(searchText, ignoreCase = true)
+                    })
                     transactionAdapter.notifyDataSetChanged()
-                }
-                else{
+                } else {
                     transactions.clear()
                     transactions.addAll(tempTransactions)
                     transactionAdapter.notifyDataSetChanged()
                 }
                 return true
             }
-
         })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.refresh -> {
-                item.isEnabled=false
+                item.isEnabled = false
                 val jsonObjectRequest = object : JsonObjectRequest(
                     Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
                     Response.Listener { response ->
-                        if (response.getString("transactions") == "up to date"){
-                            Toast.makeText(requireContext(), "Up to date", Toast.LENGTH_SHORT).show()
-                        }else {
+                        if (response.getString("transactions") == "up to date") {
+                            Toast.makeText(context, "Up to date", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
                             val jsonArray = response.getJSONArray("transactions")
                             var calendar = Calendar.getInstance()
                             var temp: JSONObject
                             var value: String
+                            scope.launch{
                             for (i in 0 until jsonArray.length()) {
                                 temp = jsonArray[i] as JSONObject
                                 value = temp.getString("date")
-                                calendar.set(
-                                    value.substring(0, 4).toInt(),
-                                    value.substring(5, 7).toInt(),
-                                    value.substring(8, 10).toInt(),
-                                    value.substring(11, 13).toInt(),
-                                    value.substring(14, 16).toInt(),
-                                    value.substring(17, 19).toInt()
-                                )
-                                Log.i("Backend", calendar.toString())
+                                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+                                val date = sdf.parse(value)// all done
+                                calendar = sdf.getCalendar()
 
-                                scope.launch {
-                                    transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("balance"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
-                                }
+                                Log.i("Backend", jsonArray[i].toString())
+
+                                transactionDao.insert(
+                                    temp.getString("fullName"),
+                                    temp.getString("uid"),
+                                    temp.getDouble("balance"),
+                                    temp.getDouble("amount"),
+                                    temp.getBoolean("sender"),
+                                    calendar
+                                )
+
 
                                 calendar = Calendar.getInstance()
                             }
-                            scope.launch {
-                                transactions.clear()
-                                transactions.addAll(transactionDao.getAllByName())
-                                tempTransactions.clear()
-                                tempTransactions.addAll(transactions)
-                                transactionAdapter.notifyDataSetChanged()
-                                recyclerView.smoothScrollToPosition(0)
+
+                            transactions.clear()
+                            transactions.addAll(transactionDao.getAllByName())
+                            tempTransactions.clear()
+                            tempTransactions.addAll(transactions)
+                            transactionAdapter.notifyDataSetChanged()
+                            recyclerView.smoothScrollToPosition(0)
+                            Log.i("Backend----", transactionDao.getAll().toString())
+
                             }
-                            Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
+                            if (context != null)
+                                Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show()
                         }
 
                         //binding.transactionsList.adapter = adapter
@@ -147,7 +148,13 @@ class NotificationsFragment : Fragment(){
                     Response.ErrorListener { error ->
                         item.isEnabled = true
                         Log.i("Backend", "Response: %s".format(error.toString()))
-                        Toast.makeText(requireContext(), "Make sure you are connected to a stable connection and try again", Toast.LENGTH_SHORT).show()
+                        if(isAdded) {
+                            Toast.makeText(
+                                activity,
+                                "Make sure you are connected to a stable connection and try again",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
                     }
                 ) {
@@ -173,18 +180,14 @@ class NotificationsFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        scope = CoroutineScope(Dispatchers.Main)
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-
-
-
 
         db = AppDatabase.getDatabase(requireContext())
         transactionDao = db.transactionDao()
 
         scope.launch { initView(root) }
-
 
         return root
     }
@@ -194,16 +197,19 @@ class NotificationsFragment : Fragment(){
         _binding = null
     }
 
-    suspend private fun initView(view: View) {
+    private suspend fun initView(view: View) {
         recyclerView = view.findViewById(R.id.transactionsRecyclerView)
         transactions = transactionDao.getAllByName().toMutableList()
         tempTransactions = mutableListOf()
         tempTransactions.addAll(transactions)
-        transactionAdapter = TransactionAdapter(transactions){
+        transactionAdapter = TransactionAdapter(transactions) {
             if (it != null) {
                 val bundle = Bundle()
                 bundle.putString("uid", it.userId)
-                findNavController().navigate(R.id.action_navigation_notifications_to_detailsFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_navigation_notifications_to_detailsFragment,
+                    bundle
+                )
             }
         }
         recyclerView.adapter = transactionAdapter

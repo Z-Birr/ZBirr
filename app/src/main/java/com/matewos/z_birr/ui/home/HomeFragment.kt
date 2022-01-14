@@ -60,20 +60,23 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
         auth = Firebase.auth
 
-        val hello : TextView = binding.hello
+        val hello: TextView = binding.hello
         val balance: TextView = binding.balance
         val sharedPref = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
         binding.textViewUidActual.setText(auth.currentUser!!.uid)
         binding.editTextAmountRequest.setText(savedInstanceState?.getString("amountRequest"))
         binding.textViewUidActual.setOnClickListener {
-            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val clip : ClipData = ClipData.newPlainText("userId", binding.textViewUidActual.text.toString())
+            val clipboardManager =
+                requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip: ClipData =
+                ClipData.newPlainText("userId", binding.textViewUidActual.text.toString())
             clipboardManager.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "user id copied to clipboard", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "user id copied to clipboard", Toast.LENGTH_SHORT)
+                .show()
         }
-        balance.setText("Current Balance: ETB ")
+        balance.setText("Current Balance: Birr ")
         homeViewModel.firstName.observe(viewLifecycleOwner, {
-            hello.text = "Hello, $it "
+            hello.text = "Hello, $it"
         })
         homeViewModel.lastName.observe(viewLifecycleOwner, {
             hello.text = "${hello.text} $it"
@@ -81,7 +84,7 @@ class HomeFragment : Fragment() {
 
 
         binding.balance.setText(sharedPref.getString("currentBalance", ""))
-        binding.floatingActionButtonRefresh.setOnClickListener{
+        binding.floatingActionButtonRefresh.setOnClickListener {
             it.visibility = View.GONE
             binding.progressBar4.visibility = View.VISIBLE
             val jsonObjectRequest = object : JsonObjectRequest(
@@ -96,14 +99,22 @@ class HomeFragment : Fragment() {
                             this?.putString("currentBalance", balance)
                             this?.apply()
                         }
-                    }catch (e: JSONException){
-                        Toast.makeText(requireContext(), "Something went wrong try again later", Toast.LENGTH_SHORT).show()
+                    } catch (e: JSONException) {
+                        Toast.makeText(
+                            context,
+                            "Something went wrong try again later",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     it.visibility = View.VISIBLE
                     binding.progressBar4.visibility = View.GONE
                 },
                 Response.ErrorListener { error ->
-                    Toast.makeText(requireContext(), "Make sure you are connected to a stable connection and try again", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Make sure you are connected to a stable connection and try again",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     it.visibility = View.VISIBLE
                     binding.progressBar4.visibility = View.GONE
                 }
@@ -111,14 +122,17 @@ class HomeFragment : Fragment() {
                 @Throws(AuthFailureError::class)
                 override fun getHeaders(): Map<String, String> {
                     val params: MutableMap<String, String> = HashMap()
-                    val token = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE).getString("Token", "")
+                    val token =
+                        SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
+                            .getString("Token", "")
 
                     params["Authorization"] = "Token $token"
                     //..add other headers
                     return params
                 }
             }
-            MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+            MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                .addToRequestQueue((jsonObjectRequest))
 
         }
 
@@ -130,7 +144,6 @@ class HomeFragment : Fragment() {
 
             builder.setView(qrView)
             builder.show()
-
 
 
             val amount = binding.editTextAmountRequest.text.toString()

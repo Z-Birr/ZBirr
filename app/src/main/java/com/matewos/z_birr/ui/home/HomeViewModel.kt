@@ -26,25 +26,23 @@ class HomeViewModel() : ViewModel() {
     private val database: DatabaseReference = Firebase.database.reference
     private val auth: FirebaseAuth = Firebase.auth
 
-
-
     val text: LiveData<String> = _text
 
-    private val _firstName : MutableLiveData<String> = MutableLiveData<String>().apply {
+    private val _firstName: MutableLiveData<String> = MutableLiveData<String>().apply {
         database.child("users").child(auth.currentUser!!.uid).child("first_name").get()
             .addOnSuccessListener {
                 value = it.value as String
-                Log.i( "ViewModel", "get data successful: ${value}")
+                Log.i("ViewModel", "get data successful: ${value}")
             }
             .addOnFailureListener {
                 Log.e("ViewModel", it.message.toString())
             }
     }
-    val _lastName : MutableLiveData<String> = MutableLiveData<String>().apply {
+    val _lastName: MutableLiveData<String> = MutableLiveData<String>().apply {
         database.child("users").child(auth.currentUser!!.uid).child("last_name").get()
             .addOnSuccessListener {
                 //value = it.value as String
-                Log.i( "ViewModel", "get data successful: ${value}")
+                Log.i("ViewModel", "get data successful: ${value}")
             }
             .addOnFailureListener {
                 Log.e("ViewModel", it.message.toString())
@@ -55,17 +53,17 @@ class HomeViewModel() : ViewModel() {
     val firstName: LiveData<String> = _firstName
     val lastName: LiveData<String> = _lastName
 
-//    init {
+    //    init {
 //        Firebase.database.setPersistenceEnabled(true)
 //        database.keepSynced(true)
 //    }
-     private fun getData(arg: String) : Any?{
+    private fun getData(arg: String): Any? {
         var value: Any? = null
-        Log.i( "ViewModel", "get data called")
+        Log.i("ViewModel", "get data called")
         database.child("users").child(auth.currentUser!!.uid).child(arg).get()
             .addOnSuccessListener {
                 value = it.value
-                Log.i( "ViewModel", "get data successful: ${value}")
+                Log.i("ViewModel", "get data successful: ${value}")
             }
             .addOnFailureListener {
                 Log.e("ViewModel", it.message.toString())

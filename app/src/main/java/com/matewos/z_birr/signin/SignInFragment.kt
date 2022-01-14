@@ -26,16 +26,19 @@ import java.security.MessageDigest
 class SignInFragment : Fragment() {
 
     val TAG = SignInFragment::class.qualifiedName
-    companion object{
+
+    companion object {
         const val USER_ID = "user_id"
     }
+
     lateinit var binding: FragmentSignInBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
     val viewModel: FormValidationViewModel by activityViewModels()
     val sharedPrefState = SplashScreen.instance.applicationContext.getSharedPreferences(
-        STATE, Context.MODE_PRIVATE)
+        STATE, Context.MODE_PRIVATE
+    )
     var newUser = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +65,8 @@ class SignInFragment : Fragment() {
         jsonObject.put("username", auth.currentUser!!.uid)
         val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
 
-        val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
+        val sharedPrefState =
+            SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
         with(sharedPrefState?.edit()) {
             this?.putString("uid", auth.currentUser!!.uid)
             this?.apply()
@@ -76,13 +80,12 @@ class SignInFragment : Fragment() {
                         .addOnSuccessListener {
                             newUser = true
                         }
-                        .addOnFailureListener {  }
-                }
-                else {
+                        .addOnFailureListener { }
+                } else {
                     binding.editTextTextConfirmPassword.visibility = View.GONE
                 }
             }
-            .addOnFailureListener{  }
+            .addOnFailureListener { }
 
         binding.finish.setOnClickListener {
             binding.finish.isEnabled = false
@@ -123,8 +126,7 @@ class SignInFragment : Fragment() {
                                 this?.apply()
                             }
                             findNavController().navigate(R.id.action_signInFragment_to_editName2)
-                        }
-                        else {
+                        } else {
                             with(sharedPrefState?.edit()) {
                                 this?.putString("state", "oldUserPasswordSetup")
                                 this?.apply()
@@ -148,7 +150,11 @@ class SignInFragment : Fragment() {
                 { error ->
                     binding.finish.isEnabled = true
                     binding.progressBar2.visibility = View.GONE
-                    Toast.makeText(context, "Make sure you are connected to stable internet connection", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Make sure you are connected to stable internet connection",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             )
             MySingleton.getInstance(SplashScreen.instance.applicationContext)

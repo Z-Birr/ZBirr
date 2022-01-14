@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.util.regex.Pattern
 
-class FormValidationViewModel: ViewModel() {
+class FormValidationViewModel : ViewModel() {
     val phoneNumber = MutableLiveData<String>("")
     var validPhone = MediatorLiveData<Boolean>().apply {
         addSource(phoneNumber) {
@@ -21,19 +21,21 @@ class FormValidationViewModel: ViewModel() {
     val confirmPassword = MutableLiveData<String>("")
 
     var validPassword = MediatorLiveData<Boolean>().apply {
-        addSource(password){
+        addSource(password) {
             value = isPasswordValid(it)
         }
     }
 
     var correctPassword = MediatorLiveData<Boolean>().apply {
-        addSource(password){
+        addSource(password) {
             value = isPasswordCorrect()
         }
     }
 
     private fun isPasswordCorrect(): Boolean {
-        if (SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE).getString("Token", "") != ""){
+        if (SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
+                .getString("Token", "") != ""
+        ) {
             return true
         }
         return false
@@ -44,16 +46,17 @@ class FormValidationViewModel: ViewModel() {
     }
 
     var validName = MediatorLiveData<Boolean>().apply {
-        addSource(firstName){
+        addSource(firstName) {
             value = isNameValid(it)
         }
     }
 
-    fun isPhoneNumberValid(phone: String): Boolean{
+    fun isPhoneNumberValid(phone: String): Boolean {
         //validPhone.value = Pattern.matches("^\\+\\d{12,}$", phone)
         return Pattern.matches("^\\+\\d{12,}$", phone)
     }
-    fun isNameValid(name: String): Boolean{
+
+    fun isNameValid(name: String): Boolean {
         return Pattern.matches("^(?=.*[a-z])(?=.*[A-Z]).{4,}$", name)
     }
 }

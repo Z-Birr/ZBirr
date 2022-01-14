@@ -17,55 +17,62 @@ import androidx.lifecycle.LiveData
 import java.beans.PropertyChangeListener
 import kotlinx.coroutines.*
 
-class SendRequest : ViewModel(){
-    private val _response = MutableLiveData<JSONObject>().apply{
+class SendRequest : ViewModel() {
+    private val _response = MutableLiveData<JSONObject>().apply {
         value = SendRequest.respons
     }
-    val response : LiveData<JSONObject> = _response
+    val response: LiveData<JSONObject> = _response
+
     companion object {
         var respons = JSONObject()
-        fun authorized(token: String?, method: Int,url: String, jsonObject: JSONObject?): JSONObject{
-                val jsonObjectRequest = object : JsonObjectRequest(
-                    method, url, jsonObject,
-                    Response.Listener { response ->
-                        respons = response
-                        Log.i("Backend", "Response: %s".format(response.toString()))
-                    },
-                    Response.ErrorListener { error ->
-                        Log.i("Backend", "Response: %s".format(error.toString()))
-                        respons = JSONObject()
-                        respons.put("error", error.toString())
-                    }
-                ) {
-                    @Throws(AuthFailureError::class)
-                    override fun getHeaders(): Map<String, String> {
-                        val params: MutableMap<String, String> = HashMap()
-                        params["Authorization"] = "Token $token"
-                        //..add other headers
-                        return params
-                    }
+        fun authorized(
+            token: String?,
+            method: Int,
+            url: String,
+            jsonObject: JSONObject?
+        ): JSONObject {
+            val jsonObjectRequest = object : JsonObjectRequest(
+                method, url, jsonObject,
+                Response.Listener { response ->
+                    respons = response
+                    Log.i("Backend", "Response: %s".format(response.toString()))
+                },
+                Response.ErrorListener { error ->
+                    Log.i("Backend", "Response: %s".format(error.toString()))
+                    respons = JSONObject()
+                    respons.put("error", error.toString())
                 }
-                MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+            ) {
+                @Throws(AuthFailureError::class)
+                override fun getHeaders(): Map<String, String> {
+                    val params: MutableMap<String, String> = HashMap()
+                    params["Authorization"] = "Token $token"
+                    //..add other headers
+                    return params
+                }
+            }
+            MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                .addToRequestQueue((jsonObjectRequest))
 
             return respons
         }
 
-        fun unauthorized (url: String, method: Int, jsonObject: JSONObject?): JSONObject{
+        fun unauthorized(url: String, method: Int, jsonObject: JSONObject?): JSONObject {
 
-                val jsonObjectRequest = JsonObjectRequest(
-                    method, url, jsonObject,
-                    { response ->
-                        respons = response
-                        Log.i("Backend", "Response: %s".format(response.toString()))
-                    },
-                    { error ->
-                        Log.i("Backend", "Response: %s".format(error.toString()))
-                        respons = JSONObject()
-                        respons.put("error", error.toString())
-                    }
-                )
-                MySingleton.getInstance(SplashScreen.instance.applicationContext)
-                    .addToRequestQueue((jsonObjectRequest))
+            val jsonObjectRequest = JsonObjectRequest(
+                method, url, jsonObject,
+                { response ->
+                    respons = response
+                    Log.i("Backend", "Response: %s".format(response.toString()))
+                },
+                { error ->
+                    Log.i("Backend", "Response: %s".format(error.toString()))
+                    respons = JSONObject()
+                    respons.put("error", error.toString())
+                }
+            )
+            MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                .addToRequestQueue((jsonObjectRequest))
 
             return respons
         }

@@ -26,7 +26,6 @@ class VerificationFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,15 +44,14 @@ class VerificationFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (binding.editTextNumberVerificationCode.text.toString().length >= 6){
+                if (binding.editTextNumberVerificationCode.text.toString().length >= 6) {
                     binding.progressBar6.visibility = View.VISIBLE
                     val storedVerificationId = arguments?.getString(VERIFICATION_ID)!!
                     val code = binding.editTextNumberVerificationCode.text.toString()
                     binding.editTextNumberVerificationCode
                     val credential = PhoneAuthProvider.getCredential(storedVerificationId, code)
                     signInWithPhoneAuthCredential(credential)
-                }
-                else{
+                } else {
                     binding.progressBar6.visibility = View.GONE
                 }
             }
@@ -70,8 +68,10 @@ class VerificationFragment : Fragment() {
                     Log.d(TAG, "signInWithCredential:success")
                     if (auth.currentUser != null) {
                         findNavController().navigate(R.id.action_verificationFragment_to_signInFragment)
-                        val sharedPref = SplashScreen.instance.applicationContext.getSharedPreferences(
-                            STATE, Context.MODE_PRIVATE)
+                        val sharedPref =
+                            SplashScreen.instance.applicationContext.getSharedPreferences(
+                                STATE, Context.MODE_PRIVATE
+                            )
                         with(sharedPref?.edit()) {
                             this?.putString("state", "verified")
                             this?.apply()

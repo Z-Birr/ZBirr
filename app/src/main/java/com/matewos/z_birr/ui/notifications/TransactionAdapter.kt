@@ -13,7 +13,10 @@ import java.util.*
 import com.matewos.z_birr.databinding.TransactionRowItemBinding
 
 
-class TransactionAdapter(private val dataSet: MutableList<Transaction>, private val onSelect: (Transaction?) -> Unit) :
+class TransactionAdapter(
+    private val dataSet: MutableList<Transaction>,
+    private val onSelect: (Transaction?) -> Unit
+) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
     lateinit var recyclerView: RecyclerView
 
@@ -29,6 +32,7 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
         val date: TextView
         val image: ImageView
         var transactionPosition = 0
+
         init {
             // Define click listener for the ViewHolder's View.
             fullName = view.findViewById(R.id.transactionFullName)
@@ -36,7 +40,8 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
             date = view.findViewById(R.id.textViewDate)
             image = view.findViewById(R.id.transactionImage)
         }
-        fun bind(transaction: Transaction, onSelect: (Transaction?) -> Unit){
+
+        fun bind(transaction: Transaction, onSelect: (Transaction?) -> Unit) {
             val item = TransactionRowItemBinding.bind(itemView)
             item.cardView.setOnClickListener {
                 onSelect(transaction)
@@ -58,16 +63,14 @@ class TransactionAdapter(private val dataSet: MutableList<Transaction>, private 
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.amount.text = String.format("%.${2}f",dataSet[position].amount)
+        viewHolder.amount.text = String.format("%.${2}f", dataSet[position].amount)
         viewHolder.fullName.text = dataSet[position].fullName
-        val calendar: Calendar = dataSet[position].date!!.clone() as Calendar
-        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1)
+        val calendar: Calendar = dataSet[position].date!!
         val simpleDateFormat = SimpleDateFormat("E, dd MMM yyyy HH:mm", Locale.US)
         viewHolder.date.text = simpleDateFormat.format(calendar.time)
-        if (dataSet[position].sender!!){
+        if (dataSet[position].sender!!) {
             viewHolder.image.setImageResource(R.drawable.ic_baseline_send_24)
-        }
-        else {
+        } else {
             viewHolder.image.setImageResource(R.drawable.ic_baseline_receive_24)
         }
         viewHolder.transactionPosition = position

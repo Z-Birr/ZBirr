@@ -48,7 +48,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private var alertBinding: AlertdialogPasswordBinding? = null
     private lateinit var sendRequest: SendRequest
-    private lateinit var mQrResultLauncher : ActivityResultLauncher<Intent>
+    private lateinit var mQrResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var layout: View
     val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
     val token = sharedPref.getString("Token", "")
@@ -87,25 +87,26 @@ class DashboardFragment : Fragment() {
         binding.editTextUserId.setText(savedInstanceState?.getString("userId"))
 
         auth = Firebase.auth
-        mQrResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            if (it.resultCode == Activity.RESULT_OK){
-                val requestcode = 0x0000c0de
-                val result = IntentIntegrator.parseActivityResult(requestcode, it.resultCode, it.data)
+        mQrResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == Activity.RESULT_OK) {
+                    val requestcode = 0x0000c0de
+                    val result =
+                        IntentIntegrator.parseActivityResult(requestcode, it.resultCode, it.data)
 
-                if (result.contents != null){
-                    //Do something with contents
-                    print(result.contents)
-                    val resultList = result.contents.split(' ')
-                    binding.editTextUserId.setText(resultList[0])
-                    try {
-                        binding.editTextAmount.setText(resultList[1])
-                    }
-                    catch (e: IndexOutOfBoundsException){
-                        e.printStackTrace()
+                    if (result.contents != null) {
+                        //Do something with contents
+                        print(result.contents)
+                        val resultList = result.contents.split(' ')
+                        binding.editTextUserId.setText(resultList[0])
+                        try {
+                            binding.editTextAmount.setText(resultList[1])
+                        } catch (e: IndexOutOfBoundsException) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
-        }
 
 
         binding.buttonQrScan.setOnClickListener {
@@ -120,7 +121,9 @@ class DashboardFragment : Fragment() {
             binding.buttonPay.isEnabled = false
             binding.progressBar3.visibility = View.VISIBLE
             val jsonObjectRequest = object : JsonObjectRequest(
-                Request.Method.GET, "$BASEURL/user/${binding.editTextUserId.text.toString()}/", null,
+                Request.Method.GET,
+                "$BASEURL/user/${binding.editTextUserId.text.toString()}/",
+                null,
                 Response.Listener { response ->
                     try {
                         firstName = response.getString("first_name")
@@ -131,8 +134,12 @@ class DashboardFragment : Fragment() {
 
 
                         showAlert()
-                    }catch (e: java.lang.Exception){
-                        Toast.makeText(requireContext(), "User doesn't exist. Try using the QR code scanner", Toast.LENGTH_SHORT).show()
+                    } catch (e: java.lang.Exception) {
+                        Toast.makeText(
+                            context,
+                            "User doesn't exist. Try using the QR code scanner",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     Log.i("Backend", "Response: %s".format(response.toString()))
                 },
@@ -140,7 +147,11 @@ class DashboardFragment : Fragment() {
                     Log.i("Backend", "Response: %s".format(error.toString()))
                     binding.buttonPay.isEnabled = true
                     binding.progressBar3.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Make sure you have stable network connection", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Make sure you have stable network connection",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             ) {
                 @Throws(AuthFailureError::class)
@@ -151,7 +162,8 @@ class DashboardFragment : Fragment() {
                     return params
                 }
             }
-            MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+            MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                .addToRequestQueue((jsonObjectRequest))
 
 
         }
@@ -170,7 +182,7 @@ class DashboardFragment : Fragment() {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Transfer")
 //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
-            if (firstName != ""){
+            if (firstName != "") {
                 val alertView = layoutInflater.inflate(R.layout.alertdialog_password, null)
                 builder.setMessage("Birr " + binding.editTextAmount.text.toString() + " will be transferred to " + firstName + " " + lastName + "\nProceed?")
                 builder.setView(alertView)
@@ -179,7 +191,8 @@ class DashboardFragment : Fragment() {
                         alertBinding = AlertdialogPasswordBinding.inflate(layoutInflater)
 
                         val jsonObject = JSONObject()
-                        val password = alertView.findViewById<TextView>(R.id.editTextTextPassword2).text.toString()
+                        val password =
+                            alertView.findViewById<TextView>(R.id.editTextTextPassword2).text.toString()
                         jsonObject.put("username", auth.currentUser?.uid)
                         jsonObject.put("password", password)
                         Log.i("Backend Request", jsonObject.toString())
@@ -197,17 +210,22 @@ class DashboardFragment : Fragment() {
                             { error ->
                                 Log.i("Backend", "Response: %s".format(error.toString()))
 
-                                Toast.makeText(requireContext(), "Make sure you have entered the correct password and a stable network connection", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Make sure you have entered the correct password and a stable network connection",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         )
 
-                        MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+                        MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                            .addToRequestQueue((jsonObjectRequest))
 
 
-                }
+                    }
                 builder.setNegativeButton("No") { dialog, which ->
                     Toast.makeText(
-                        requireContext(),
+                        context,
                         "Transfer cancelled", Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -215,21 +233,21 @@ class DashboardFragment : Fragment() {
                 builder.setMessage("User doesn't exist.\nTry using the QR code scanner")
                 builder.setNeutralButton("OK") { dialog, which ->
                     Toast.makeText(
-                        requireContext(),
+                        context,
                         "Transfer error", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
 
-
-
-
             builder.show()
             Log.i("Backend Responsef", SendRequest.respons.toString())
 
-        }
-        else{
-            Toast.makeText(requireContext(), "Make sure to fill both fields, Amount should be at least Birr 5.00 and user id is 28 characters long", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                context,
+                "Make sure to fill both fields, Amount should be at least Birr 5.00 and user id is 28 characters long",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         binding.buttonPay.isEnabled = true
         binding.progressBar3.visibility = View.GONE
@@ -301,13 +319,18 @@ class DashboardFragment : Fragment() {
             jsonObject,
             Response.Listener { response ->
 
-                Toast.makeText(requireContext(), response.getString("status"), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, response.getString("status"), Toast.LENGTH_SHORT)
+                    .show()
 
                 Log.i("Backend", "Response: %s".format(response.toString()))
             },
             Response.ErrorListener { error ->
                 Log.i("Backend", "Response: %s".format(error.toString()))
-                Toast.makeText(requireContext(), "Make sure you have stable network connection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Make sure you have stable network connection",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         ) {
             @Throws(AuthFailureError::class)
@@ -318,9 +341,10 @@ class DashboardFragment : Fragment() {
                 return params
             }
         }
-        MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+        MySingleton.getInstance(SplashScreen.instance.applicationContext)
+            .addToRequestQueue((jsonObjectRequest))
         Toast.makeText(
-            requireContext(),
+             context,
             "pending...", Toast.LENGTH_SHORT
         ).show()
     }

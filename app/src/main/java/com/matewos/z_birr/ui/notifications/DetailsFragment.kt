@@ -19,10 +19,7 @@ import com.matewos.z_birr.database.Transaction
 import com.matewos.z_birr.database.TransactionDao
 import com.matewos.z_birr.databinding.FragmentDetailsBinding
 import com.matewos.z_birr.databinding.FragmentNotificationsBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class DetailsFragment : Fragment() {
@@ -32,29 +29,33 @@ class DetailsFragment : Fragment() {
     lateinit var transactions: MutableList<Transaction>
     lateinit var recyclerView: RecyclerView
     lateinit var transactionDetailAdapter: TransactionDetailAdapter
+    lateinit var scope: CoroutineScope
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView (
+    override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
-
+        scope = CoroutineScope(Dispatchers.Main)
         binding.textViewUserId.setOnClickListener {
-            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip : ClipData = ClipData.newPlainText("userId", binding.textViewUserId.text.toString())
+            val clipboardManager =
+                requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip: ClipData =
+                ClipData.newPlainText("userId", binding.textViewUserId.text.toString())
             clipboardManager.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "user id copied to clipboard", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "user id copied to clipboard", Toast.LENGTH_SHORT)
+                .show()
         }
 
         db = AppDatabase.getDatabase(requireContext())
         transactionDao = db.transactionDao()
 
-        val scope = CoroutineScope(Dispatchers.Main)
 
         scope.launch {
             transactions = arguments?.getString("uid", "")
@@ -72,7 +73,7 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
+        when (item.itemId) {
             android.R.id.home -> {
                 Log.i("Search", "alksdlflka")
                 requireActivity().onBackPressed()
@@ -80,5 +81,10 @@ class DetailsFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scope.cancel()
     }
 }

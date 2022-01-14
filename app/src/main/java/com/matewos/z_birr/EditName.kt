@@ -24,16 +24,17 @@ import org.json.JSONObject
 
 class EditName : Fragment() {
 
-    lateinit var binding : FragmentEditNameBinding
+    lateinit var binding: FragmentEditNameBinding
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     val viewModel: FormValidationViewModel by lazy {
         ViewModelProvider(this).get(FormValidationViewModel::class.java)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View{
+    ): View {
 
         binding = FragmentEditNameBinding.inflate(inflater, container, false)
         database = Firebase.database.reference
@@ -51,19 +52,25 @@ class EditName : Fragment() {
             val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
             val token = sharedPref?.getString("Token", "")
 
-            database.child("users").child(auth.currentUser!!.uid).child("first_name").setValue(binding.editTextTextFirstName.text.toString())
-            database.child("users").child(auth.currentUser!!.uid).child("last_name").setValue(binding.editTextTextLastName.text.toString())
+            database.child("users").child(auth.currentUser!!.uid).child("first_name")
+                .setValue(binding.editTextTextFirstName.text.toString())
+            database.child("users").child(auth.currentUser!!.uid).child("last_name")
+                .setValue(binding.editTextTextLastName.text.toString())
                 .addOnSuccessListener {
                     val jsonObjectRequest = object : JsonObjectRequest(
                         Method.PUT, url, jsonObject,
                         Response.Listener { _ ->
-                            val sharedPrefState = SplashScreen.instance.getSharedPreferences(STATE, Context.MODE_PRIVATE)
+                            val sharedPrefState = SplashScreen.instance.getSharedPreferences(
+                                STATE,
+                                Context.MODE_PRIVATE
+                            )
                             with(sharedPrefState?.edit()) {
                                 this?.putString("state", "oldUserPasswordSetup")
                                 this?.apply()
                             }
                             val intent = Intent(activity, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
 
                         },
@@ -80,7 +87,8 @@ class EditName : Fragment() {
                             return params
                         }
                     }
-                    MySingleton.getInstance(SplashScreen.instance.applicationContext).addToRequestQueue((jsonObjectRequest))
+                    MySingleton.getInstance(SplashScreen.instance.applicationContext)
+                        .addToRequestQueue((jsonObjectRequest))
 
 
                 }

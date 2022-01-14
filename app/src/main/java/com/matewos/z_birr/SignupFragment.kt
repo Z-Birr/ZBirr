@@ -25,10 +25,12 @@ class SignupFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     lateinit var storedVerificationId: String
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-//    private lateinit var binding: FragmentSignupBinding
+
+    //    private lateinit var binding: FragmentSignupBinding
     val viewModel: FormValidationViewModel by lazy {
         ViewModelProvider(this).get(FormValidationViewModel::class.java)
     }
@@ -37,7 +39,6 @@ class SignupFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -103,18 +104,18 @@ class SignupFragment : Fragment() {
 
                     savedInstanceState?.putString(VERIFICATION_ID, storedVerificationId)
 
-
-
-
-                    storedVerificationId = if (verificationId != ""){
+                    storedVerificationId = if (verificationId != "") {
                         verificationId
-                    } else{
+                    } else {
                         savedInstanceState?.getString(VERIFICATION_ID).toString()
                     }
 
                     val bundle = Bundle()
                     bundle.putString(VERIFICATION_ID, storedVerificationId)
-                    findNavController().navigate(R.id.action_signupFragment_to_verificationFragment, bundle)
+                    findNavController().navigate(
+                        R.id.action_signupFragment_to_verificationFragment,
+                        bundle
+                    )
 
                     // Save verification ID and resending token so we can use them later
 
@@ -133,29 +134,6 @@ class SignupFragment : Fragment() {
                 .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
                 .build()
             PhoneAuthProvider.verifyPhoneNumber(options)
-
-
-            //VIA EMAIL
-//            val email = binding.editTextTextEmailAddress.text.toString()
-//            val password = binding.editTextTextPassword.text.toString()
-//            auth.createUserWithEmailAndPassword(email, password)
-//                .addOnCompleteListener(requireActivity()) { task ->
-//                if (task.isSuccessful){
-//                    // Sign in success, update UI with the signed-in user's information
-//                    Log.d(TAG, "createUserWithEmail:success")
-//                    val user = auth.currentUser
-//                    val intent = Intent(activity, MainActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    startActivity(intent)
-//                    //update ui
-//                } else {
-//                    // If sign in fails, display a message to the user.
-//                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
-//                    Toast.makeText(activity, "Authentication failed.",
-//                        Toast.LENGTH_SHORT).show()
-//                    //updateUI(null)
-//                }
-//            }
 
         }
 
@@ -208,7 +186,6 @@ class SignupFragment : Fragment() {
                 }
             }
     }
-
 
 
 }

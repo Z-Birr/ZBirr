@@ -23,7 +23,7 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
     }
     val text: LiveData<String> = _text
 
-    private val _adapter = MutableLiveData<ArrayList<Transaction>>().apply{
+    private val _adapter = MutableLiveData<ArrayList<Transaction>>().apply {
     }
 
 }

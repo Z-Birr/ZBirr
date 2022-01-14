@@ -28,17 +28,18 @@ class WelcomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    lateinit var resultLauncher : ActivityResultLauncher<Intent>
+    lateinit var resultLauncher: ActivityResultLauncher<Intent>
     val sharedPrefState = SplashScreen.instance.applicationContext.getSharedPreferences(
-        STATE, Context.MODE_PRIVATE)
+        STATE, Context.MODE_PRIVATE
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if (sharedPrefState?.getString("state", "") == "verified"){
+        if (sharedPrefState?.getString("state", "") == "verified") {
             findNavController().navigate(R.id.action_welcomeFragment_to_signInFragment)
-        }
-        else if (sharedPrefState.getString("state", "") == "newUserPasswordSetup") {
+        } else if (sharedPrefState.getString("state", "") == "newUserPasswordSetup") {
             findNavController().navigate(R.id.action_welcomeFragment_to_editName2)
         }
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
@@ -57,21 +58,23 @@ class WelcomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = it.data
-                val response = IdpResponse.fromResultIntent(data)
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == Activity.RESULT_OK) {
-                    val user = FirebaseAuth.getInstance().currentUser
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.putExtra(SignInFragment.USER_ID, user!!.uid)
-                    activity?.startActivity(intent)
-                } else {
-                    Log.e("TAG", "Sign-in failed", response!!.error)
+                    val data: Intent? = it.data
+                    val response = IdpResponse.fromResultIntent(data)
+                    if (it.resultCode == Activity.RESULT_OK) {
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val intent = Intent(activity, MainActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.putExtra(SignInFragment.USER_ID, user!!.uid)
+                        activity?.startActivity(intent)
+                    } else {
+                        Log.e("TAG", "Sign-in failed", response!!.error)
+                    }
                 }
             }
-        }
     }
 
     override fun onDestroyView() {
