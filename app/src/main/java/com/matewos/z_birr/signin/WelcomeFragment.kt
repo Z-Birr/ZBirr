@@ -34,7 +34,7 @@ class WelcomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         if (sharedPrefState?.getString("state", "") == "verified"){
             findNavController().navigate(R.id.action_welcomeFragment_to_signInFragment)
         }
@@ -65,7 +65,7 @@ class WelcomeFragment : Fragment() {
                     val user = FirebaseAuth.getInstance().currentUser
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    val putExtra = intent.putExtra(SignInFragment.USER_ID, user!!.uid)
+                    intent.putExtra(SignInFragment.USER_ID, user!!.uid)
                     activity?.startActivity(intent)
                 } else {
                     Log.e("TAG", "Sign-in failed", response!!.error)

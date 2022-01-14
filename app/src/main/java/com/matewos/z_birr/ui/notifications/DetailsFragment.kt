@@ -40,12 +40,12 @@ class DetailsFragment : Fragment() {
     override fun onCreateView (
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
 
         binding.textViewUserId.setOnClickListener {
-            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip : ClipData = ClipData.newPlainText("userId", binding.textViewUserId.text.toString())
             clipboardManager.setPrimaryClip(clip)
             Toast.makeText(requireContext(), "user id copied to clipboard", Toast.LENGTH_SHORT).show()

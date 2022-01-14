@@ -30,7 +30,7 @@ class VerificationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentVerificationBinding.inflate(inflater, container, false)
         auth = Firebase.auth
 

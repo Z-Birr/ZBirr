@@ -101,7 +101,7 @@ class NotificationsFragment : Fragment(){
             R.id.refresh -> {
                 item.isEnabled=false
                 val jsonObjectRequest = object : JsonObjectRequest(
-                    Request.Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
+                    Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
                     Response.Listener { response ->
                         if (response.getString("transactions") == "up to date"){
                             Toast.makeText(requireContext(), "Up to date", Toast.LENGTH_SHORT).show()
@@ -172,7 +172,7 @@ class NotificationsFragment : Fragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
