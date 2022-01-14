@@ -3,6 +3,7 @@ package com.matewos.z_birr.signin
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,8 +62,6 @@ class SignInFragment : Fragment() {
         auth = Firebase.auth
         database = Firebase.database.reference
         var url: String
-        val jsonObject = JSONObject()
-        jsonObject.put("username", auth.currentUser!!.uid)
         val sharedPref = SplashScreen.instance.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
 
         val sharedPrefState =
@@ -90,6 +89,8 @@ class SignInFragment : Fragment() {
         binding.finish.setOnClickListener {
             binding.finish.isEnabled = false
             binding.progressBar2.visibility = View.VISIBLE
+            val jsonObject = JSONObject()
+            jsonObject.put("username", auth.currentUser!!.uid)
             if (newUser) {
                 jsonObject.put("password1", binding.editTextTextPassword.text.toString())
                 jsonObject.put("password2", binding.editTextTextConfirmPassword.text.toString())
@@ -98,6 +99,8 @@ class SignInFragment : Fragment() {
                 jsonObject.put("password", binding.editTextTextPassword.text.toString())
                 url = "$BASEURL/rest-auth/login/"
             }
+
+            Log.i("Backend====", jsonObject.toString())
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, url, jsonObject,
                 { response ->

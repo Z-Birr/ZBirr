@@ -112,10 +112,12 @@ class SignupFragment : Fragment() {
 
                     val bundle = Bundle()
                     bundle.putString(VERIFICATION_ID, storedVerificationId)
-                    findNavController().navigate(
-                        R.id.action_signupFragment_to_verificationFragment,
-                        bundle
-                    )
+                    if (isAdded()){
+                        findNavController().navigate(
+                            R.id.action_signupFragment_to_verificationFragment,
+                            bundle
+                        )
+                    }
 
                     // Save verification ID and resending token so we can use them later
 

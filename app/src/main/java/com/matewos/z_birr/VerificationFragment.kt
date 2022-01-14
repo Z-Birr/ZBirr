@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.PhoneAuthProvider
@@ -32,7 +33,6 @@ class VerificationFragment : Fragment() {
     ): View {
         binding = FragmentVerificationBinding.inflate(inflater, container, false)
         auth = Firebase.auth
-
 
         database = Firebase.database.reference
         database.keepSynced(true)
@@ -81,6 +81,7 @@ class VerificationFragment : Fragment() {
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                         if (task.exception is FirebaseAuthInvalidCredentialsException) {
                             // The verification code entered was invalid
+                            Toast.makeText(context, "Make sure you entered correct verification code", Toast.LENGTH_SHORT).show()
                         }
                         // Update UI
                     }
