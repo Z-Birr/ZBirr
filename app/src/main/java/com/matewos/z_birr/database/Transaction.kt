@@ -33,16 +33,16 @@ interface TransactionDao{
     fun getAll() : List<Transaction>
 
     @Query("SELECT * FROM 'transaction' WHERE transactionId IN ( SELECT MAX(transactionId) FROM `transaction` GROUP BY fullName) ORDER BY date DESC")
-    fun getAllByName() : List<Transaction>
+    suspend fun getAllByName() : List<Transaction>
 
     @Query("SELECT * FROM `transaction` WHERE  userId LIKE :search OR fullName LIKE :search ORDER BY date DESC")
-    fun search(search: String): List<Transaction> // Don't forget to put %uid%
+    suspend fun search(search: String): List<Transaction> // Don't forget to put %uid%
 
     @Query("SELECT COUNT(transactionId) FROM `transaction`")
     fun count():Int
 
     @Query("INSERT INTO `transaction` (fullName, userId, sender, balance, date, amount) VALUES (:fullName, :userId, :sender, :balance, :date, :amount)")
-    fun insert(fullName: String, userId: String, balance: Double ,amount: Double, sender: Boolean, date: Calendar)
+    suspend fun insert(fullName: String, userId: String, balance: Double ,amount: Double, sender: Boolean, date: Calendar)
 
     @Query("DELETE FROM `transaction`")
     fun deleteAll()

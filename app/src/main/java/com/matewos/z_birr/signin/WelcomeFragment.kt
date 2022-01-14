@@ -53,18 +53,6 @@ class WelcomeFragment : Fragment() {
             findNavController().navigate(R.id.action_welcomeFragment_to_signupFragment)
         }
 
-        binding.signIn.setOnClickListener {
-            //findNavController().navigate(R.id.action_welcomeFragment_to_signInFragment)
-            val providers = arrayListOf(
-                AuthUI.IdpConfig.EmailBuilder().build()
-            )
-
-            resultLauncher.launch(
-                AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .build())
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -46,11 +46,15 @@ class VerificationFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (binding.editTextNumberVerificationCode.text.toString().length >= 6){
+                    binding.progressBar6.visibility = View.VISIBLE
                     val storedVerificationId = arguments?.getString(VERIFICATION_ID)!!
                     val code = binding.editTextNumberVerificationCode.text.toString()
                     binding.editTextNumberVerificationCode
                     val credential = PhoneAuthProvider.getCredential(storedVerificationId, code)
                     signInWithPhoneAuthCredential(credential)
+                }
+                else{
+                    binding.progressBar6.visibility = View.GONE
                 }
             }
         })

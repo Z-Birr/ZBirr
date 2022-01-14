@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.CoroutinesRoom
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.android.volley.AuthFailureError
@@ -30,6 +31,9 @@ import com.matewos.z_birr.database.AppDatabase
 import com.matewos.z_birr.database.Transaction
 import com.matewos.z_birr.database.TransactionDao
 import com.matewos.z_birr.databinding.FragmentNotificationsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.sql.Date
@@ -53,6 +57,7 @@ class NotificationsFragment : Fragment(){
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    val scope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,15 +103,13 @@ class NotificationsFragment : Fragment(){
                 val jsonObjectRequest = object : JsonObjectRequest(
                     Request.Method.GET, "$BASEURL/transactiontable/${transactionDao.count()}/", null,
                     Response.Listener { response ->
-                        var length = 0
                         if (response.getString("transactions") == "up to date"){
                             Toast.makeText(requireContext(), "Up to date", Toast.LENGTH_SHORT).show()
                         }else {
                             val jsonArray = response.getJSONArray("transactions")
                             var calendar = Calendar.getInstance()
-                            length = jsonArray.length()
-                            var temp = JSONObject()
-                            var value = ""
+                            var temp: JSONObject
+                            var value: String
                             for (i in 0 until jsonArray.length()) {
                                 temp = jsonArray[i] as JSONObject
                                 value = temp.getString("date")
@@ -120,16 +123,20 @@ class NotificationsFragment : Fragment(){
                                 )
                                 Log.i("Backend", calendar.toString())
 
-                                transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("balance"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
+                                scope.launch {
+                                    transactionDao.insert(temp.getString("fullName"), temp.getString("uid"), temp.getDouble("balance"), temp.getDouble("amount"), temp.getBoolean("sender"), calendar)
+                                }
 
                                 calendar = Calendar.getInstance()
                             }
-                            transactions.clear()
-                            transactions.addAll(transactionDao.getAllByName())
-                            tempTransactions.clear()
-                            tempTransactions.addAll(transactions)
-                            transactionAdapter.notifyDataSetChanged()
-                            recyclerView.smoothScrollToPosition(0)
+                            scope.launch {
+                                transactions.clear()
+                                transactions.addAll(transactionDao.getAllByName())
+                                tempTransactions.clear()
+                                tempTransactions.addAll(transactions)
+                                transactionAdapter.notifyDataSetChanged()
+                                recyclerView.smoothScrollToPosition(0)
+                            }
                             Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
                         }
 
@@ -175,7 +182,8 @@ class NotificationsFragment : Fragment(){
 
         db = AppDatabase.getDatabase(requireContext())
         transactionDao = db.transactionDao()
-        initView(root)
+
+        scope.launch { initView(root) }
 
 
         return root
@@ -186,7 +194,7 @@ class NotificationsFragment : Fragment(){
         _binding = null
     }
 
-    private fun initView(view: View) {
+    suspend private fun initView(view: View) {
         recyclerView = view.findViewById(R.id.transactionsRecyclerView)
         transactions = transactionDao.getAllByName().toMutableList()
         tempTransactions = mutableListOf()

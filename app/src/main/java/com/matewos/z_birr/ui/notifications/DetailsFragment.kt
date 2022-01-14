@@ -19,6 +19,11 @@ import com.matewos.z_birr.database.Transaction
 import com.matewos.z_birr.database.TransactionDao
 import com.matewos.z_birr.databinding.FragmentDetailsBinding
 import com.matewos.z_birr.databinding.FragmentNotificationsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
 
 class DetailsFragment : Fragment() {
     lateinit var binding: FragmentDetailsBinding
@@ -32,7 +37,7 @@ class DetailsFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(
+    override fun onCreateView (
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
@@ -48,15 +53,21 @@ class DetailsFragment : Fragment() {
 
         db = AppDatabase.getDatabase(requireContext())
         transactionDao = db.transactionDao()
-        transactions = arguments?.getString("uid", "")?.let { transactionDao.search("%"+it+"%").toMutableList() }!!
 
-        binding.name.setText(transactions[0].fullName)
-        binding.textViewUserId.setText(transactions[0].userId)
+        val scope = CoroutineScope(Dispatchers.Main)
 
-        recyclerView = binding.recyclerView
-        transactionDetailAdapter = TransactionDetailAdapter(transactions)
-        recyclerView.adapter = transactionDetailAdapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        scope.launch {
+            transactions = arguments?.getString("uid", "")
+                ?.let { transactionDao.search("%" + it + "%").toMutableList() }!!
+
+            binding.name.setText(transactions[0].fullName)
+            binding.textViewUserId.setText(transactions[0].userId)
+
+            recyclerView = binding.recyclerView
+            transactionDetailAdapter = TransactionDetailAdapter(transactions)
+            recyclerView.adapter = transactionDetailAdapter
+            recyclerView.layoutManager = LinearLayoutManager(context)
+        }
         return binding.root
     }
 
